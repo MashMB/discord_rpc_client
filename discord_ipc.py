@@ -68,7 +68,8 @@ class DiscordIPC:
 				if pipe == None:
 					pipe = "/tmp" + os_dependencies.sockets_names["discord"]
 
-			logger.debug("IPC socket found: " + pipe)
+			logger.info("IPC socket found ")
+			logger.debug("IPC socket path: " + pipe)
 
 		else:
 			# If platform is not supported, end program
