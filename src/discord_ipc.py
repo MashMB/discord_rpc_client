@@ -57,7 +57,7 @@ class DiscordIPC:
 		# If platform is supported
 		if system_name in os_dependencies.supported:
 			logger.info("Supported OS")
-			logger.info("Searching for valid IPC sockets path...")
+			logger.info("Searching for valid Discord IPC socket path...")
 
 			# Other Discord IPC socket localization on different platofrms
 			if system_name == os_dependencies.supported[0] :
@@ -71,8 +71,8 @@ class DiscordIPC:
 				if pipe == None:
 					pipe = "/tmp" + os_dependencies.sockets_names["discord"]
 
-			logger.info("IPC socket found")
-			logger.debug("IPC socket path: " + pipe)
+			logger.info("Discord IPC socket found")
+			logger.debug("Discord IPC socket path: " + pipe)
 
 		else:
 			# If platform is not supported, end program
