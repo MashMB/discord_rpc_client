@@ -15,6 +15,7 @@ import platform
 import socket
 import struct
 import sys
+import threading
 
 # Configuring logger
 logging.basicConfig(format = "%(asctime)s: [%(levelname)s]: %(message)s", datefmt = "%d.%m.%Y (%H:%M:%S)", level = logging.DEBUG)
@@ -158,3 +159,26 @@ class DiscordIPC:
 		# Sending data via socket created earlier (connect method)
 		self.soc.send(encoded_data)
 		logger.info("Data sent")
+
+class DiscordListener(threading.Thread):
+	"""
+	Discord messages handler. Recives all messages
+	that Discord sends to the client.
+
+	:param Thread: Thread class from Python threading
+	default installed module, passed as parameter to extend
+	it's functionality
+	:type Thread: Thread
+	"""
+
+	def __init__(self, ipc):
+		"""
+		DiscordListener constructor.
+
+		:param ipc: access to Discord IPC wrapper functions
+		(especially read_data() method)
+		:type ipc: DiscordIPC
+		"""
+
+		self.ipc = ipc
+		super().__init__()
