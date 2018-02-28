@@ -41,7 +41,6 @@ class DiscordIPC:
 		self.is_connected = False
 		self.soc = None
 		self.pid = os.getpid()
-		self.listener = DiscordListener(self)
 
 	def get_system_property(self):
 		"""
@@ -103,24 +102,12 @@ class DiscordIPC:
 				logger.info("Connection command executed")
 				# Firstly try to handshake
 				self.handshake()
-				# Starting daemon Thread to recive messages from Discord
-				self.listener.setDaemon(True)
-				self.listener.start()
 			except ConnectionRefusedError:
 				# If can not connect to Discord, log it
 				logger.error("Can not connect to Discord (probably Discord app is not opened)")
 
 		else:
 			logger.info("Already connected")
-
-	def disconnect(self):
-		"""
-		Stoping worker that is listening for messages from Discord.
-		"""
-
-		logger.info("Disconnecting from Discord...")
-		is_connected = False
-		self.listener.join(0.5)
 
 	def handshake(self):
 		"""
@@ -179,36 +166,3 @@ class DiscordIPC:
 		# Sending data via socket created earlier (connect method)
 		self.soc.send(encoded_data)
 		logger.info("Data sent")
-
-class DiscordListener(threading.Thread):
-	"""
-	Discord messages handler. Recives all messages
-	that Discord sends to the client.
-
-	:param Thread: Thread class from Python threading
-	default installed module, passed as parameter to extend
-	it's functionality
-	:type Thread: Thread
-	"""
-
-	def __init__(self, ipc):
-		"""
-		DiscordListener constructor.
-
-		:param ipc: access to Discord IPC wrapper functions
-		(especially read_data() method)
-		:type ipc: DiscordIPC
-		"""
-
-		self.ipc = ipc
-		super().__init__(name = "DiscordListener")
-
-	def run(self):
-		"""
-		Overriden default run method for Thread.
-		Thread will be running till Discord IPC has
-		connection status seted to True.
-		"""
-
-		while self.ipc.is_connected:
-			self.ipc.read_data()
