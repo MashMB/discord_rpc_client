@@ -6,6 +6,9 @@ File that contains expected paths to IPC
 sockets on specific platforms.
 """
 
+# Supported platforms
+supported = ["windows", "linux", "darwin"]
+
 # Path variations for specific platforms
 paths = {
 	"windows": "\\\\?\\pipe",
