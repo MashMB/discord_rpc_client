@@ -113,6 +113,15 @@ class DiscordIPC:
 		else:
 			logger.info("Already connected")
 
+	def disconnect(self):
+		"""
+		Stoping worker that is listening for messages from Discord.
+		"""
+
+		logger.info("Disconnecting from Discord...")
+		is_connected = False
+		self.listener.join(0.5)
+
 	def handshake(self):
 		"""
 		Handshaking with Discord (negotiation between two 
