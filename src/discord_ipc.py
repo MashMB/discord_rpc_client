@@ -16,6 +16,7 @@ import socket
 import struct
 import sys
 import threading
+import time
 import uuid
 
 # Configuring logger
@@ -43,6 +44,16 @@ class DiscordIPC:
 		self.soc = None
 		self.pid = os.getpid()
 		self.listener = threading.Thread(name = "discord_listener", target = self.read_data)
+
+	def get_current_time(self):
+		"""
+		Get current time from system clock.
+
+		:returns: current time from system clock in seconds
+		:rtype: float
+		"""
+
+		return time.time()
 
 	def get_system_property(self):
 		"""
@@ -245,8 +256,9 @@ class DiscordIPC:
 		logger.debug("Payload assets -> small_image: " + small_image)
 
 		# Setting start time for Discord Rich Presence timer
-		""" payloads.rpc_timestamps["start"] = start_time
-		logger.debug("Payload timestamps -> start: " + start_time) """
+		start_time = self.get_current_time()
+		payloads.rpc_timestamps["start"] = start_time
+		logger.debug("Payload timestamps -> start: " + str(start_time))
 
 		# Setting user activity details
 		payloads.rpc_activity["details"] = activity_details
@@ -256,7 +268,7 @@ class DiscordIPC:
 
 		# Setting pid of running process
 		payloads.rpc_args["pid"] = self.pid
-		logger.debug("Payload args -> pid: " + self.pid)
+		logger.debug("Payload args -> pid: " + str(self.pid))
 
 		# Setting unique uuid for payload
 		id = str(self.generate_uuid())
