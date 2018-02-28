@@ -41,6 +41,7 @@ class DiscordIPC:
 		self.is_connected = False
 		self.soc = None
 		self.pid = os.getpid()
+		self.listener = threading.Thread(name = "discord_listener", target = self.read_data)
 
 	def get_system_property(self):
 		"""
@@ -102,12 +103,34 @@ class DiscordIPC:
 				logger.info("Connection command executed")
 				# Firstly try to handshake
 				self.handshake()
+				# Start listening for messages from Discord
+				self.listener.start()
+				logger.info("Discord messages listener started")
 			except ConnectionRefusedError:
 				# If can not connect to Discord, log it
 				logger.error("Can not connect to Discord (probably Discord app is not opened)")
 
 		else:
 			logger.info("Already connected")
+
+	def disconnect(self):
+		"""
+		Disconnecting from Discord by closing network socket
+		and terminating Discord messages listener (thread)
+		"""
+
+		logger.info("Trying to disconnect from Discord...")
+		# Set connection status
+		self.is_connected = False
+		# Close socket immediately for sending and reciving data
+		self.soc.shutdown(socket.SHUT_RDWR)
+		self.soc.close()
+		self.soc = None
+		logger.debug("Socket closed")
+		# Terminate listener Thread
+		self.listener.join(1.0)
+		logger.debug("Discord messages listener terminated")
+		logger.info("Disconnected from Discord")
 
 	def handshake(self):
 		"""
@@ -122,23 +145,36 @@ class DiscordIPC:
 
 	def read_data(self):
 		"""
-		Reciving and decoding data from Discord.
+		Reciving and decoding data from Discord
+		via thread to keep connection alive.
 		"""
 
-		logger.info("Getting data from Discord...")
-		# Recive data on network socket
-		recived_data = self.soc.recv(1024)
-		logger.info("Data recived")
-		logger.debug("Recived encoded data: " + str(recived_data))
-		logger.info("Decoding recived data...")
-		# Decode packet header
-		decoded_header = struct.unpack("<ii", recived_data[:8])
-		# Decode packet (json format)
-		decoded_data = json.loads(recived_data[8:].decode("utf-8"))
-		opcode = decoded_header[0]
-		data_length = decoded_header[1]
-		logger.debug("Recived decoded data: " + str(opcode) + " " + str(data_length) + repr(decoded_data))
-		logger.info("Recived data decoded")
+		# Recive date while connection is keep alive
+		while self.is_connected:
+			try:
+				logger.info("Waiting for data from Discord...")
+				# Recive data on network socket
+				recived_data = self.soc.recv(1024)
+
+				# When recived data is not empty
+				if str(recived_data) != "b\'\'":
+					logger.info("Data recived")
+					logger.debug("Recived encoded data: " + str(recived_data))
+					logger.info("Decoding recived data...")
+					# Decode packet header
+					decoded_header = struct.unpack("<ii", recived_data[:8])
+					# Decode packet (json format)
+					decoded_data = json.loads(recived_data[8:].decode("utf-8"))
+					opcode = decoded_header[0]
+					data_length = decoded_header[1]
+					logger.debug("Recived decoded data: " + str(opcode) + " " + str(data_length) + repr(decoded_data))
+					logger.info("Recived data decoded")
+				else:
+					logger.info("Waiting for data from Discord timeouted")
+			except Exception:
+				# There can be exception connected to unpacking data header
+				logger.error("Recived data could not be decoded")
+				break
 
 	def send_data(self, opcode, payload):
 		"""
