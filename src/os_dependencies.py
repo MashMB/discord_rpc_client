@@ -9,7 +9,7 @@ Discord IPC socket on specific platforms.
 # Supported platforms
 supported = ["windows", "linux", "darwin"]
 
-# Path variations for specific platforms
+# Localizations for specific platforms where Discord IPC socket can be found
 localizations = {
 	"windows": "\\\\?\\pipe",
 	"unix": {
