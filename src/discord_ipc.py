@@ -108,6 +108,7 @@ class DiscordIPC:
 		"""
 
 		logger.info("Handshaking with Discord...")
+		# Get payload template and rewrite empty client ID
 		payloads.handshake["client_id"] = self.client_id
 		self.send(0, payloads.handshake)
 
