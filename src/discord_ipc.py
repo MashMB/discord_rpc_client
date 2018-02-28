@@ -3,7 +3,7 @@ File name: ipc.py
 Author: Maciej Bedra
 
 Simple Discord IPC wrapper that gives opportunity 
-to use Discord Rich Presence.
+to use Discord Rich Presence for example.
 """
 
 import json
@@ -59,17 +59,17 @@ class DiscordIPC:
 			logger.info("Supported OS")
 			logger.info("Searching for valid Discord IPC socket path...")
 
-			# Other Discord IPC socket localization on different platofrms
+			# Other Discord IPC socket localization on different platforms
 			if system_name == os_dependencies.supported[0] :
-				pipe = os_dependencies.paths["windows"] + "\\" + os_dependencies.sockets_names["discord"]
+				pipe = os_dependencies.localizations["windows"] + "\\" + os_dependencies.socket_name["discord"]
 			else:
-				for path in os_dependencies.paths["unix"]:
+				for path in os_dependencies.localizations["unix"]:
 					if os.environ.get(path, None) != None:
-						pipe = os.environ.get(path) + "/" + os_dependencies.sockets_names["discord"]
+						pipe = os.environ.get(path) + "/" + os_dependencies.socket_name["discord"]
 						break
 
 				if pipe == None:
-					pipe = "/tmp" + os_dependencies.sockets_names["discord"]
+					pipe = "/tmp" + os_dependencies.socket_name["discord"]
 
 			logger.info("Discord IPC socket found")
 			logger.debug("Discord IPC socket path: " + pipe)
