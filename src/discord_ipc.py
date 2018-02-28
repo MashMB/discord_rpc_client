@@ -110,9 +110,9 @@ class DiscordIPC:
 		logger.info("Handshaking with Discord...")
 		# Get payload template and rewrite empty client ID
 		payloads.handshake["client_id"] = self.client_id
-		self.send(0, payloads.handshake)
+		self.send_data(0, payloads.handshake)
 
-	def send(self, op, payload):
+	def send_data(self, op, payload):
 		"""
 		Encoding data to send and 
 		sending encoded data to Discord app.
