@@ -99,10 +99,12 @@ class DiscordIPC:
 			try:
 				# Connect via pipe
 				self.soc.connect(self.pipe)
+				self.is_connected = True
 				logger.info("Connection command executed")
 				# Firstly try to handshake
 				self.handshake()
-				# Starting Thread to recive messages from Discord
+				# Starting daemon Thread to recive messages from Discord
+				self.listener.setDaemon(True)
 				self.listener.start()
 			except ConnectionRefusedError:
 				# If can not connect to Discord, log it
@@ -190,4 +192,14 @@ class DiscordListener(threading.Thread):
 		"""
 
 		self.ipc = ipc
-		super().__init__()
+		super().__init__(name = "DiscordListener")
+
+	def run(self):
+		"""
+		Overriden default run method for Thread.
+		Thread will be running till Discord IPC has
+		connection status seted to True.
+		"""
+
+		while self.ipc.is_connected:
+			self.ipc.read_data()
