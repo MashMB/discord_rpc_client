@@ -112,7 +112,7 @@ class DiscordIPC:
 		payloads.handshake["client_id"] = self.client_id
 		self.send_data(0, payloads.handshake)
 
-	def send_data(self, op, payload):
+	def send_data(self, opcode, payload):
 		"""
 		Encoding data to send and 
 		sending encoded data to Discord app.
@@ -129,11 +129,11 @@ class DiscordIPC:
 		payload = json.dumps(payload) # Creating json file format from payload
 		logger.info("Creating data to send...")
 		# Presenting decoded data to send
-		data = str(op) + " " + str(len(payload)) + payload
+		data = str(opcode) + " " + str(len(payload)) + payload
 		logger.debug("Data ready to send: " + data)
 		logger.info("Encoding data to send...")
 		# Encoding data that will be send
-		encoded_data = struct.pack("<ii", op, len(payload)) + payload.encode()
+		encoded_data = struct.pack("<ii", opcode, len(payload)) + payload.encode()
 		logger.debug("Encoded data ready to send: " + str(encoded_data))
 		# Sending data via socket created earlier (connect method)
 		self.soc.send(encoded_data)
