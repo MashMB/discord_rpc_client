@@ -2,15 +2,15 @@
 File name: os_dependencies.py
 Author: Maciej Bedra
 
-File that contains expected paths to IPC 
-sockets on specific platforms.
+File that contains expected localizations to 
+Discord IPC socket on specific platforms.
 """
 
 # Supported platforms
 supported = ["windows", "linux", "darwin"]
 
 # Path variations for specific platforms
-paths = {
+localizations = {
 	"windows": "\\\\?\\pipe",
 	"unix": {
 		"XDG_RUNTIME_DIR",
@@ -20,7 +20,7 @@ paths = {
 	}
 }
 
-# Expected sockets names
-sockets_names = {
+# Expected socket name
+socket_name = {
 	"discord": "discord-ipc-0"
 }
