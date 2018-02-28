@@ -1,5 +1,5 @@
 """
-File name: ipc.py
+File name: discord_ipc.py
 Author: Maciej Bedra
 
 Simple Discord IPC wrapper that gives opportunity 
