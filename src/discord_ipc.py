@@ -16,6 +16,7 @@ import socket
 import struct
 import sys
 import threading
+import uuid
 
 # Configuring logger
 logging.basicConfig(format = "%(asctime)s: [%(levelname)s]: %(message)s", datefmt = "%d.%m.%Y (%H:%M:%S)", level = logging.DEBUG)
@@ -84,6 +85,16 @@ class DiscordIPC:
 			sys.exit()
 
 		return pipe
+
+	def generate_uuid(self):
+		"""
+		Generating unique uuid.
+
+		:returns: unique uuid
+		:rtype: uuid
+		"""
+
+		return uuid.uuid4()
 
 	def connect(self):
 		"""
@@ -248,8 +259,9 @@ class DiscordIPC:
 		logger.debug("Payload args -> pid: " + self.pid)
 
 		# Setting unique uuid for payload
-		""" payloads.rpc["nonce"] = 
-		logger.debug("Payloads rpc -> nonce" + ) """
+		id = str(self.generate_uuid())
+		payloads.rpc["nonce"] = id
+		logger.debug("Payloads rpc -> nonce" + id)
 
 		logger.info("Discord Rich Presence payload created")
 
