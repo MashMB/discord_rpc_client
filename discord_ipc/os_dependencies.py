@@ -22,3 +22,8 @@ paths = {
 		"TEMP"
 	}
 }
+
+# Expected sockets names
+sockets_names = {
+	"discord": "discord-ipc-0"
+}
