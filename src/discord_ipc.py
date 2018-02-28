@@ -37,6 +37,7 @@ class DiscordIPC:
 
 		self.client_id = client_id
 		self.pipe = self.get_system_property()
+		self.is_connected = False
 		self.soc = None
 		self.pid = os.getpid()
 
@@ -81,6 +82,24 @@ class DiscordIPC:
 			sys.exit()
 
 		return pipe
+
+	def connect(self):
+		"""
+		Method that attempts establish connection to Discord.
+		"""
+
+		# If there is no connection
+		if not self.is_connected:
+			logger.info("Trying to connect to Discord...")
+			# Open network socket
+			self.soc = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+			# Connect via pipe
+			self.soc.connect(self.pipe)
+			logger.info("Connection command executed")
+			# Firstly try to handshake
+			self.handshake()
+		else:
+			logger.info("Already connected")
 
 	def handshake(self):
 		"""
