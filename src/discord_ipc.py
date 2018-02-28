@@ -112,6 +112,26 @@ class DiscordIPC:
 		payloads.handshake["client_id"] = self.client_id
 		self.send_data(0, payloads.handshake)
 
+	def read_data(self):
+		"""
+		Reciving and decoding data from Discord.
+		"""
+
+		logger.info("Getting data from Discord...")
+		# Recive data on network socket
+		recived_data = self.soc.recv(1024)
+		logger.info("Data recived")
+		logger.debug("Recived encoded data: " + str(recived_data))
+		logger.info("Decoding recived data...")
+		# Decode packet header
+		decoded_header = struct.unpack("<ii", recived_data[:8])
+		# Decode packet (json format)
+		decoded_data = json.loads(recived_data[8:].decode("utf-8"))
+		opcode = decoded_header[0]
+		data_length = decoded_header[1]
+		logger.debug("Recived decoded data: " + str(opcode) + " " + str(data_length) + repr(decoded_data))
+		logger.info("Recived data decoded")
+
 	def send_data(self, opcode, payload):
 		"""
 		Encoding data to send and 
