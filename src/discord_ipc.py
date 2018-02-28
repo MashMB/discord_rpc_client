@@ -10,6 +10,7 @@ import json
 import logging
 import os
 import os_dependencies
+import payloads
 import platform
 import socket
 import struct
@@ -80,6 +81,16 @@ class DiscordIPC:
 			sys.exit()
 
 		return pipe
+
+	def handshake(self):
+		"""
+		Handshaking with Discord (negotiation between two 
+		communicating participants).
+		"""
+
+		logger.info("Handshaking with Discord...")
+		payloads.handshake["client_id"] = self.client_id
+		self.send(0, payloads.handshake)
 
 	def send(self, op, payload):
 		"""
