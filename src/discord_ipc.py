@@ -131,6 +131,7 @@ class DiscordIPC:
 			except ConnectionRefusedError:
 				# If can not connect to Discord, log it
 				logger.error("Can not connect to Discord (probably Discord app is not opened)")
+				sys.exit()
 
 		else:
 			logger.info("Already connected")
