@@ -9,13 +9,7 @@ sockets on specific platforms.
 # Path variations for specific platforms
 paths = {
 	"windows": "\\\\?\\pipe",
-	"linux": {
-		"XDG_RUNTIME_DIR",
-		"TMPDIR",
-		"TMP",
-		"TEMP"
-	},
-	"darwin": {
+	"unix": {
 		"XDG_RUNTIME_DIR",
 		"TMPDIR",
 		"TMP",
