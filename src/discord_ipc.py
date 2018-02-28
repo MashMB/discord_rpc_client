@@ -41,6 +41,7 @@ class DiscordIPC:
 		self.is_connected = False
 		self.soc = None
 		self.pid = os.getpid()
+		self.listener = DiscordListener(self)
 
 	def get_system_property(self):
 		"""
@@ -94,11 +95,19 @@ class DiscordIPC:
 			logger.info("Trying to connect to Discord...")
 			# Open network socket
 			self.soc = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-			# Connect via pipe
-			self.soc.connect(self.pipe)
-			logger.info("Connection command executed")
-			# Firstly try to handshake
-			self.handshake()
+
+			try:
+				# Connect via pipe
+				self.soc.connect(self.pipe)
+				logger.info("Connection command executed")
+				# Firstly try to handshake
+				self.handshake()
+				# Starting Thread to recive messages from Discord
+				self.listener.start()
+			except ConnectionRefusedError:
+				# If can not connect to Discord, log it
+				logger.error("Can not connect to Discord (probably Discord app is not opened)")
+
 		else:
 			logger.info("Already connected")
 
