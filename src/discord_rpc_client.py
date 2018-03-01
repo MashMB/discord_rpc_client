@@ -27,6 +27,24 @@ def main():
 	Send Discord Rich Presence status to Discord 
 	just change method parameters.
 
+	activity_details = description of main user activity
+
+	activity_state = additional description of user activity
+	"""
+	ipc.send_rich_presence("activity_details", "activity_state")
+	time.sleep(30)
+	ipc.disconnect()
+
+	"""
+	There is also support for complex Discord Rich Presence payload
+	(changing images, not only texts) just replace this line:
+
+	# ipc.send_rich_presence("activity_details", "activity_state") #
+
+	with this line:
+		
+	# ipc.send_rich_presence("large_text", "large_image", "small_text", "small_image", "activity_details", "activity_state") #
+
 	large_text = text that will be displayed on large image hover
 
 	large_image = name of large image file, seted on Discord developers website 
@@ -41,9 +59,6 @@ def main():
 
 	activity_state = additional description of user activity
 	"""
-	ipc.send_rich_presence("large_text", "large_image", "small_text", "small_image", "activity_details", "activity_state")
-	time.sleep(30)
-	ipc.disconnect()
 
 if __name__ == "__main__":
 	main()
