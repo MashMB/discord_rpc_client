@@ -64,7 +64,7 @@ class DiscordIPC:
 		:rtype: string
 		"""
 
-		pipe = None # variable for Discord IPC socket path
+		pipe = None # Variable for Discord IPC socket path
 		logger.info("Recognizing OS...")
 		system_name = platform.system() # Getting system name
 		logger.info("Running OS: " + system_name)
