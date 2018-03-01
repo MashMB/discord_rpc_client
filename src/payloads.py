@@ -25,17 +25,24 @@ rpc_timestamps = {
 	"start": None
 }
 
-# Json template for rpc activity section
-rpc_activity = {
+# Json template for rpc complex (full) activity section
+rpc_complex_activity = {
 	"details": None,
 	"state": None,
 	"timestamps": rpc_timestamps,
 	"asstes": rpc_assets
 }
 
+# Json template for rpc simple activity section
+rpc_simple_activity = {
+	"details": None,
+	"state": None,
+	"timestamps": rpc_timestamps
+}
+
 # Json template for rpc args section
 rpc_args = {
-	"activity": rpc_activity,
+	"activity": None
 	"pid": None
 }
 
