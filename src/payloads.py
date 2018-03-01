@@ -42,7 +42,7 @@ rpc_simple_activity = {
 
 # Json template for rpc args section
 rpc_args = {
-	"activity": None
+	"activity": None,
 	"pid": None
 }
 
