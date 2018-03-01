@@ -226,9 +226,49 @@ class DiscordIPC:
 		self.soc.send(encoded_data)
 		logger.info("Data sent")
 
+	def send_rich_presence(self, activity_details, activity_state):
+		"""
+		Creating and sending simple Discord Rich Presence payload to Discord.
+
+		:param activity_details: main description of activity
+		:type activity_details: string
+		:param activity_state: additional description of activity
+		:type activity_state: string
+		"""
+		
+		logger.info("Creating Discord Rich Presence payload")
+
+		# Setting start time for Discord Rich Presence timer
+		start_time = self.get_current_time()
+		payloads.rpc_timestamps["start"] = start_time
+		logger.debug("Payload timestamps -> start: " + str(start_time))
+
+		# Setting user activity details
+		payloads.rpc_simple_activity["details"] = activity_details
+		logger.debug("Payload activity -> details: " + activity_details)
+		payloads.rpc_simple_activity["state"] = activity_state
+		logger.debug("Payload activity -> state: " + activity_state)
+
+		# Setting proper activity type for payload args
+		payloads.rpc_args["activity"] = payloads.rpc_simple_activity
+
+		# Setting pid of running process
+		payloads.rpc_args["pid"] = self.pid
+		logger.debug("Payload args -> pid: " + str(self.pid))
+
+		# Setting unique uuid for payload
+		id = str(self.generate_uuid())
+		payloads.rpc["nonce"] = id
+		logger.debug("Payloads rpc -> nonce" + id)
+
+		logger.info("Discord Rich Presence payload created")
+
+		# Sending ready Discord Rich Presence payload
+		self.send_data(1, payloads.rpc)
+
 	def send_rich_presence(self, large_text, large_image, small_text, small_image, activity_details, activity_state):
 		"""
-		Creating and sending Discord Rich Presence payload to Discord.
+		Creating and sending complex (full) Discord Rich Presence payload to Discord.
 
 		:param large_text: text to display when large image is hovered
 		:type large_text: string
@@ -262,10 +302,13 @@ class DiscordIPC:
 		logger.debug("Payload timestamps -> start: " + str(start_time))
 
 		# Setting user activity details
-		payloads.rpc_activity["details"] = activity_details
+		payloads.rpc_complex_activity["details"] = activity_details
 		logger.debug("Payload activity -> details: " + activity_details)
-		payloads.rpc_activity["state"] = activity_state
+		payloads.rpc_complex_activity["state"] = activity_state
 		logger.debug("Payload activity -> state: " + activity_state)
+
+		# Setting proper activity type for payload args
+		payloads.rpc_args["activity"] = payloads.rpc_complex_activity
 
 		# Setting pid of running process
 		payloads.rpc_args["pid"] = self.pid
