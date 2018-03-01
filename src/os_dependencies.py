@@ -21,6 +21,4 @@ localizations = {
 }
 
 # Expected socket name
-socket_name = {
-	"discord": "discord-ipc-0"
-}
+socket_name = ["discord-ipc-0"]

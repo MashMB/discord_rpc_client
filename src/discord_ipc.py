@@ -77,15 +77,15 @@ class DiscordIPC:
 
 			# Other Discord IPC socket localization on different platforms
 			if system_name == os_dependencies.supported[0] :
-				pipe = os_dependencies.localizations["windows"] + "\\" + os_dependencies.socket_name["discord"]
+				pipe = os_dependencies.localizations["windows"] + "\\" + os_dependencies.socket_name[0]
 			else:
 				for path in os_dependencies.localizations["unix"]:
 					if os.environ.get(path, None) != None:
-						pipe = os.environ.get(path) + "/" + os_dependencies.socket_name["discord"]
+						pipe = os.environ.get(path) + "/" + os_dependencies.socket_name[0]
 						break
 
 				if pipe == None:
-					pipe = "/tmp" + os_dependencies.socket_name["discord"]
+					pipe = "/tmp" + os_dependencies.socket_name[0]
 
 			logger.info("Discord IPC socket found")
 			logger.debug("Discord IPC socket path: " + pipe)
