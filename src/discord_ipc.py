@@ -226,7 +226,7 @@ class DiscordIPC:
 		self.soc.send(encoded_data)
 		logger.info("Data sent")
 
-	def send_rich_presence(self, activity_details, activity_state):
+	def send_simple_rich_presence(self, activity_details, activity_state):
 		"""
 		Creating and sending simple Discord Rich Presence payload to Discord.
 
@@ -266,7 +266,7 @@ class DiscordIPC:
 		# Sending ready Discord Rich Presence payload
 		self.send_data(1, payloads.rpc)
 
-	def send_rich_presence(self, large_text, large_image, small_text, small_image, activity_details, activity_state):
+	def send_complex_rich_presence(self, large_text, large_image, small_text, small_image, activity_details, activity_state):
 		"""
 		Creating and sending complex (full) Discord Rich Presence payload to Discord.
 
