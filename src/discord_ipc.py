@@ -123,32 +123,22 @@ class DiscordIPC:
 
 	def connect(self):
 		"""
-		Method that attempts establish connection to Discord.
+		Trying connect to Discord. Connection is established
+		when Discord recives initial message and responses
+		for the message.
 		"""
 
-		# If there is no connection
 		if not self.is_connected:
-			logger.info("Trying to connect to Discord...")
-			# Open network socket
-			self.soc = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-
-			try:
-				# Connect via pipe
-				self.soc.connect(self.pipe)
-				self.is_connected = True
-				logger.info("Connection command executed")
-				# Firstly try to handshake
-				self.handshake()
-				# Start listening for messages from Discord
-				self.listener.start()
-				logger.info("Discord messages listener started")
-			except ConnectionRefusedError:
-				# If can not connect to Discord, log it
-				logger.error("Can not connect to Discord (probably Discord app is not opened)")
-				sys.exit()
-
+			logger.info("Trying connect to Discord...")
+			# Create main event loop
+			self.event_loop = asyncio.get_event_loop()
+			# Send inital message and wait for response
+			self.event_loop.run_until_complete(self.handshake())
+			# Keep connection alive when handshake passes
+			self.discord_listener.start()
+			logger.info("Keeping connection alive...")
 		else:
-			logger.info("Already connected")
+			logger.warning("Already connected to Discord")
 
 	def disconnect(self):
 		"""
