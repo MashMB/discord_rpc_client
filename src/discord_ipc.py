@@ -185,6 +185,15 @@ class DiscordIPC:
 		self.is_connected = True
 		logger.info("Connection with Discord established")
 
+	def keep_conncetion_alive(self):
+		"""
+		Keeping connection alive. No timeout
+		functions for fast terminating.
+		"""
+
+		while self.is_connected:
+			pass
+
 	async def read_data(self):
 		"""
 		Reciving and decoding data from Discord
