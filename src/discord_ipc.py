@@ -175,6 +175,7 @@ class DiscordIPC:
 
 		logger.info("Disconnecting from Discord...")
 		self.pipe_writer.close()
+		self.event_loop.run_until_complete(self.proper_close())
 		self.event_loop.close()
 		self.is_connected = False
 		self.pipe_writer = None
@@ -215,6 +216,16 @@ class DiscordIPC:
 
 		while self.is_connected:
 			pass
+
+	async def proper_close(self):
+		"""
+		Using asyncio.ProactorEventLoop() on Windows
+		causes some errors while pipe connection and
+		after that closing main event loop so this
+		easy hack repairs it.
+		"""
+
+		pass
 
 	async def read_data(self):
 		"""
