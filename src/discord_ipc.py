@@ -245,7 +245,7 @@ class DiscordIPC:
 			# Decoding data in json format
 			decoded_data = json.loads(recived_data[8:].decode("utf-8"))
 			logger.info("Recived data decoded")
-			logger.info("Decoded data: " + "(" + str(decoded_header[0]) + ", " + str(decoded_header[1]) + ")" + str(decoded_data))
+			logger.debug("Decoded data: " + "(" + str(decoded_header[0]) + ", " + str(decoded_header[1]) + ")" + str(decoded_data))
 		except Exception as ex:
 			logger.error("Cannot get data from Discord")
 			logger.debug("Error: " + str(ex))
