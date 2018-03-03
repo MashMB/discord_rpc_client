@@ -42,6 +42,7 @@ class DiscordIPC:
 		self.system_name = self.get_system_name()
 		self.ipc_socket = self.get_ipc_socket()
 		self.pid = os.getpid()
+		self.discord_listener = threading.Thread(name = "discord_listener", target = self.keep_conncetion_alive)
 		self.event_loop = None
 		self.pipe_writer = None
 		self.pipe_reader = None
