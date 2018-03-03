@@ -56,6 +56,30 @@ class DiscordIPC:
 
 		return time.time()
 
+	def get_system_name(self):
+		"""
+		Getting system name and checking 
+		if running OS is supported.
+
+		:returns: running OS name (lowercase)
+		:rtype: string
+		"""
+
+		logger.info("Recognizing running OS...")
+		# Get system name
+		system_name = platform.system()
+		logger.info("Running OS: " + system_name)
+		# Format system name string for next operations
+		system_name = system_name.lower()
+
+		# If OS is supported, return name
+		if system_name in os_dependencies.supported:
+			return system_name
+		else:
+			# Unsupported OS warning for user
+			logger.warning("Unsupported OS")
+			sys.exit()
+
 	def get_system_property(self):
 		"""
 		Recognizing running OS on user platform and searching for path
