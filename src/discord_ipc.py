@@ -133,8 +133,13 @@ class DiscordIPC:
 
 			try:
 				logger.info("Trying connect to Discord...")
+
 				# Create main event loop
-				self.event_loop = asyncio.get_event_loop()
+				if self.system_name == os_dependencies.supported[0]:
+					self.event_loop = asyncio.ProactorEventLoop()
+				else:
+					self.event_loop = asyncio.get_event_loop()
+					
 				# Send inital message and wait for response
 				self.event_loop.run_until_complete(self.handshake())
 				# Keep connection alive when handshake passes
