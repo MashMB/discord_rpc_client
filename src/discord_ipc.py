@@ -220,8 +220,8 @@ class DiscordIPC:
 	async def proper_close(self):
 		"""
 		Using asyncio.ProactorEventLoop() on Windows
-		causes some errors while pipe connection and
-		after that closing main event loop so this
+		causes some errors while terminationg pipe connection and
+		after that immediately closing main event loop. This
 		easy hack repairs it.
 		"""
 
