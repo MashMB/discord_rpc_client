@@ -130,14 +130,20 @@ class DiscordIPC:
 		"""
 
 		if not self.is_connected:
-			logger.info("Trying connect to Discord...")
-			# Create main event loop
-			self.event_loop = asyncio.get_event_loop()
-			# Send inital message and wait for response
-			self.event_loop.run_until_complete(self.handshake())
-			# Keep connection alive when handshake passes
-			self.discord_listener.start()
-			logger.info("Keeping connection alive...")
+
+			try:
+				logger.info("Trying connect to Discord...")
+				# Create main event loop
+				self.event_loop = asyncio.get_event_loop()
+				# Send inital message and wait for response
+				self.event_loop.run_until_complete(self.handshake())
+				# Keep connection alive when handshake passes
+				self.discord_listener.start()
+				logger.info("Keeping connection alive...")
+			except ConnectionRefusedError:
+				logger.error("Can not connect to Discord (probably Discord app is not opened)")
+				sys.exit()
+				
 		else:
 			logger.warning("Already connected to Discord")
 
