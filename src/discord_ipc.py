@@ -59,7 +59,8 @@ class DiscordIPC:
 	def get_system_name(self):
 		"""
 		Getting system name and checking 
-		if running OS is supported.
+		if running OS is supported. Supported OS:
+		Windows, Linux, MacOS.
 
 		:returns: running OS name (lowercase)
 		:rtype: string
