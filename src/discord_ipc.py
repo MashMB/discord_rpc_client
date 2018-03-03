@@ -6,16 +6,15 @@ Simple Discord IPC wrapper that gives opportunity
 to use Discord Rich Presence for example.
 """
 
+import asyncio
 import json
 import logging
 import os
 import os_dependencies
 import payloads
 import platform
-import socket
 import struct
 import sys
-import threading
 import time
 import uuid
 
@@ -39,11 +38,13 @@ class DiscordIPC:
 		"""
 
 		self.client_id = client_id
-		self.pipe = self.get_system_property()
 		self.is_connected = False
-		self.soc = None
+		self.system_name = self.get_system_name()
 		self.pid = os.getpid()
-		self.listener = threading.Thread(name = "discord_listener", target = self.read_data)
+		self.event_loop = None
+		self.ipc_socket = None
+		self.pipe_writer = None
+		self.pipe_reader = None
 
 	def get_current_time(self):
 		"""
