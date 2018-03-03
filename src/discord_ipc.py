@@ -139,7 +139,7 @@ class DiscordIPC:
 					self.event_loop = asyncio.ProactorEventLoop()
 				else:
 					self.event_loop = asyncio.get_event_loop()
-					
+
 				# Send inital message and wait for response
 				self.event_loop.run_until_complete(self.handshake())
 				# Keep connection alive when handshake passes
@@ -175,8 +175,16 @@ class DiscordIPC:
 		"""
 
 		logger.info("Trying to handshake with Discord...")
-		logger.debug("Openning unix connection with Discord IPC socket...")
-		self.pipe_reader, self.pipe_writer = await asyncio.open_unix_connection(self.ipc_socket, loop = self.event_loop)
+
+		# Different pipe support on different platform
+		if self.system_name == os_dependencies.supported[0]:
+			logger.debug("Creating pipe connection with Discord IPC socket...")
+			self.pipe_reader = asyncio.StreamReader(loop = self.event_loop)
+			self.pipe_writer, protocol = await self.event_loop.create_pipe_connection(lambda: asyncio.StreamReaderProtocol(self.ipc_socket, loop = self.event_loop), self.ipc_socket)
+		else:
+			logger.debug("Openning unix connection with Discord IPC socket...")
+			self.pipe_reader, self.pipe_writer = await asyncio.open_unix_connection(self.ipc_socket, loop = self.event_loop)
+
 		payloads.handshake["client_id"] = self.client_id
 		# Sending initial payload
 		self.send_data(0, payloads.handshake)
