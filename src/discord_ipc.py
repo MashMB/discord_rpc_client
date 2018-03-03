@@ -142,22 +142,19 @@ class DiscordIPC:
 
 	def disconnect(self):
 		"""
-		Disconnecting from Discord by closing network socket
-		and terminating Discord messages listener (thread)
+		Disconnecting from Discord by terminating
+		asynchronous methods and Thread that
+		keeps connection alive, reseting all components.
 		"""
 
-		logger.info("Trying to disconnect from Discord...")
-		# Set connection status
+		logger.info("Disconnecting from Discord...")
+		self.pipe_writer.close()
+		self.event_loop.close()
 		self.is_connected = False
-		# Close socket immediately for sending and reciving data
-		self.soc.shutdown(socket.SHUT_RDWR)
-		self.soc.close()
-		self.soc = None
-		logger.debug("Socket closed")
-		# Terminate listener Thread
-		self.listener.join(1.0)
-		logger.debug("Discord messages listener terminated")
-		logger.info("Disconnected from Discord")
+		self.pipe_writer = None
+		self.pipe_reader = None
+		self.event_loop = None
+		logger.info("Disconneted from Discord")
 
 	async def handshake(self):
 		"""
