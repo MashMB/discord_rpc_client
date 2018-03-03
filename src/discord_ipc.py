@@ -40,9 +40,9 @@ class DiscordIPC:
 		self.client_id = client_id
 		self.is_connected = False
 		self.system_name = self.get_system_name()
+		self.ipc_socket = self.get_ipc_socket()
 		self.pid = os.getpid()
 		self.event_loop = None
-		self.ipc_socket = None
 		self.pipe_writer = None
 		self.pipe_reader = None
 
@@ -80,47 +80,34 @@ class DiscordIPC:
 			logger.warning("Unsupported OS")
 			sys.exit()
 
-	def get_system_property(self):
+	def get_ipc_socket(self):
 		"""
-		Recognizing running OS on user platform and searching for path
-		to Discord IPC socket. Supported platforms: Windows, Linux, MacOS.
+		Searching for Discord IPC socket. Different localizations
+		to search for on different platforms.
 
 		:returns: path to Discord IPC socket
 		:rtype: string
 		"""
 
-		pipe = None # Variable for Discord IPC socket path
-		logger.info("Recognizing OS...")
-		system_name = platform.system() # Getting system name
-		logger.info("Running OS: " + system_name)
-		system_name = system_name.lower()
+		logger.info("Searching for Discord IPC socket...")
+		ipc_socket = None # Variable for path to Discord IPC socket
 
-		# If platform is supported
-		if system_name in os_dependencies.supported:
-			logger.info("Supported OS")
-			logger.info("Searching for valid Discord IPC socket path...")
-
-			# Other Discord IPC socket localization on different platforms
-			if system_name == os_dependencies.supported[0] :
-				pipe = os_dependencies.localizations["windows"] + "\\" + os_dependencies.socket_name[0]
-			else:
-				for path in os_dependencies.localizations["unix"]:
+		# Different Discord IPC socket localization on different platforms
+		if self.system_name == os_dependencies.supported[0]:
+			ipc_socket = os_dependencies.localizations["windows"] + "\\" + os_dependencies.socket_name[0]
+		else:
+			for path in os_dependencies.localizations["unix"]:
 					if os.environ.get(path, None) != None:
-						pipe = os.environ.get(path) + "/" + os_dependencies.socket_name[0]
+						ipc_socket = os.environ.get(path) + "/" + os_dependencies.socket_name[0]
 						break
 
-				if pipe == None:
-					pipe = "/tmp" + os_dependencies.socket_name[0]
+				if ipc_socket == None:
+					ipc_socket = "/tmp" + os_dependencies.socket_name[0]
 
-			logger.info("Discord IPC socket found")
-			logger.debug("Discord IPC socket path: " + pipe)
+		logger.info("Discord IPC socket found")
+		logger.debug("Path to Discord IPC socket: " + ipc_socket)
 
-		else:
-			# If platform is not supported, end program
-			logger.info("Unsupported OS")
-			sys.exit()
-
-		return pipe
+		return ipc_socket
 
 	def generate_uuid(self):
 		"""
