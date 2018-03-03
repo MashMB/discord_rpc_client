@@ -168,16 +168,22 @@ class DiscordIPC:
 		logger.debug("Discord messages listener terminated")
 		logger.info("Disconnected from Discord")
 
-	def handshake(self):
+	async def handshake(self):
 		"""
 		Handshaking with Discord (negotiation between two 
-		communicating participants).
+		communicating participants) in asynchronous way.
 		"""
 
-		logger.info("Handshaking with Discord...")
-		# Get payload template and rewrite empty client ID
+		logger.info("Trying to handshake with Discord...")
+		logger.debug("Openning unix connection with Discord IPC socket...")
+		self.pipe_reader, self.pipe_writer = await asyncio.open_unix_conncetion(self.ipc_socket, loop = self.event_loop)
 		payloads.handshake["client_id"] = self.client_id
+		# Sending initial payload
 		self.send_data(0, payloads.handshake)
+		# Connection is established only if Discord app responses for initial payload
+		await self.read_data()
+		self.is_connected = True
+		logger.info("Connection with Discord established")
 
 	def read_data(self):
 		"""
