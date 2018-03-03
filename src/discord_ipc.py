@@ -155,7 +155,7 @@ class DiscordIPC:
 		self.pipe_writer = None
 		self.pipe_reader = None
 		self.event_loop = None
-		logger.info("Disconneted")
+		logger.info("Disconncted")
 
 	async def handshake(self):
 		"""
@@ -225,7 +225,7 @@ class DiscordIPC:
 		logger.info("Encoding data to send...")
 		# Payload in json appearance
 		payload = json.dumps(payload)
-		# Encoding packet
+		# Encoding packet with header creation
 		encoded_data = struct.pack("<ii", opcode, len(payload)) + payload.encode("utf-8")
 		logger.info("Data encoded")
 		logger.debug("Encoded data: " + str(encoded_data))
