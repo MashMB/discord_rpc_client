@@ -180,7 +180,7 @@ class DiscordIPC:
 		if self.system_name == os_dependencies.supported[0]:
 			logger.debug("Creating pipe connection with Discord IPC socket...")
 			self.pipe_reader = asyncio.StreamReader(loop = self.event_loop)
-			self.pipe_writer, protocol = await self.event_loop.create_pipe_connection(lambda: asyncio.StreamReaderProtocol(self.ipc_socket, loop = self.event_loop), self.ipc_socket)
+			self.pipe_writer, protocol = await self.event_loop.create_pipe_connection(lambda: asyncio.StreamReaderProtocol(self.pipe_reader, loop = self.event_loop), self.ipc_socket)
 		else:
 			logger.debug("Openning unix connection with Discord IPC socket...")
 			self.pipe_reader, self.pipe_writer = await asyncio.open_unix_connection(self.ipc_socket, loop = self.event_loop)
