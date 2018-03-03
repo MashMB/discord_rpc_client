@@ -16,6 +16,7 @@ import platform
 import struct
 import sys
 import time
+import threading
 import uuid
 
 # Configuring logger
@@ -103,8 +104,8 @@ class DiscordIPC:
 						ipc_socket = os.environ.get(path) + "/" + os_dependencies.socket_name[0]
 						break
 
-				if ipc_socket == None:
-					ipc_socket = "/tmp" + os_dependencies.socket_name[0]
+			if ipc_socket == None:
+				ipc_socket = "/tmp" + os_dependencies.socket_name[0]
 
 		logger.info("Discord IPC socket found")
 		logger.debug("Path to Discord IPC socket: " + ipc_socket)
@@ -154,7 +155,7 @@ class DiscordIPC:
 		self.pipe_writer = None
 		self.pipe_reader = None
 		self.event_loop = None
-		logger.info("Disconneted from Discord")
+		logger.info("Disconneted")
 
 	async def handshake(self):
 		"""
@@ -164,7 +165,7 @@ class DiscordIPC:
 
 		logger.info("Trying to handshake with Discord...")
 		logger.debug("Openning unix connection with Discord IPC socket...")
-		self.pipe_reader, self.pipe_writer = await asyncio.open_unix_conncetion(self.ipc_socket, loop = self.event_loop)
+		self.pipe_reader, self.pipe_writer = await asyncio.open_unix_connection(self.ipc_socket, loop = self.event_loop)
 		payloads.handshake["client_id"] = self.client_id
 		# Sending initial payload
 		self.send_data(0, payloads.handshake)
@@ -199,8 +200,8 @@ class DiscordIPC:
 			decoded_header = struct.unpack("<ii", recived_data[:8])
 			# Decoding data in json format
 			decoded_data = json.loads(recived_data[8:].decode("utf-8"))
-			loger.info("Recived data decoded")
-			logger.info("Decoded data: " + str(decoded_header[0]) + " " + str(decoded_header[1]) + decoded_data)
+			logger.info("Recived data decoded")
+			logger.info("Decoded data: " + "(" + str(decoded_header[0]) + ", " + str(decoded_header[1]) + ")" + str(decoded_data))
 		except Exception as ex:
 			logger.error("Cannot get data from Discord")
 			logger.debug("Error: " + str(ex))
@@ -220,14 +221,12 @@ class DiscordIPC:
 		"""
 
 		logger.info("Trying to send payload to Discord...")
-		logger.debug("Orginal data: " + str(opcode) + " " + str(len(payload)) + payload)
+		logger.debug("Orginal data: " + "(" + str(opcode) + ", " + str(len(payload)) + ")" + str(payload))
 		logger.info("Encoding data to send...")
-		# Encoding header
-		encoded_header = struct.pack("<ii", opcode, len(payload))
 		# Payload in json appearance
 		payload = json.dumps(payload)
-		# Encoding whole packet
-		encoded_data = encoded_header + payload.encode("utf-8")
+		# Encoding packet
+		encoded_data = struct.pack("<ii", opcode, len(payload)) + payload.encode("utf-8")
 		logger.info("Data encoded")
 		logger.debug("Encoded data: " + str(encoded_data))
 		self.pipe_writer.write(encoded_data)
@@ -243,35 +242,31 @@ class DiscordIPC:
 		:type activity_state: string
 		"""
 		
-		logger.info("Creating Discord Rich Presence payload")
+		logger.info("Creating Discord Rich Presence payload...")
 
 		# Setting start time for Discord Rich Presence timer
 		start_time = self.get_current_time()
 		payloads.rpc_timestamps["start"] = start_time
-		logger.debug("Payload timestamps -> start: " + str(start_time))
 
 		# Setting user activity details
 		payloads.rpc_simple_activity["details"] = activity_details
-		logger.debug("Payload activity -> details: " + activity_details)
 		payloads.rpc_simple_activity["state"] = activity_state
-		logger.debug("Payload activity -> state: " + activity_state)
 
 		# Setting proper activity type for payload args
 		payloads.rpc_args["activity"] = payloads.rpc_simple_activity
 
 		# Setting pid of running process
 		payloads.rpc_args["pid"] = self.pid
-		logger.debug("Payload args -> pid: " + str(self.pid))
 
 		# Setting unique uuid for payload
 		id = str(self.generate_uuid())
 		payloads.rpc["nonce"] = id
-		logger.debug("Payloads rpc -> nonce" + id)
 
-		logger.info("Discord Rich Presence payload created")
+		logger.info("Payload created")
 
 		# Sending ready Discord Rich Presence payload
 		self.send_data(1, payloads.rpc)
+		self.event_loop.run_until_complete(self.read_data())
 
 	def send_complex_rich_presence(self, large_text, large_image, small_text, small_image, activity_details, activity_state):
 		"""
@@ -291,42 +286,34 @@ class DiscordIPC:
 		:type activity_state: string
 		"""
 		
-		logger.info("Creating Discord Rich Presence payload")
+		logger.info("Creating Discord Rich Presence payload...")
 
 		# Setting assets
 		payloads.rpc_assets["large_text"] = large_text
-		logger.debug("Payload assets -> large_text: " + large_text)
 		payloads.rpc_assets["large_image"] = large_image
-		logger.debug("Payload assets -> large_image: " + large_image)
 		payloads.rpc_assets["small_text"] = small_text
-		logger.debug("Payload assets -> small_text: " + small_text)
 		payloads.rpc_assets["small_image"] = small_image
-		logger.debug("Payload assets -> small_image: " + small_image)
 
 		# Setting start time for Discord Rich Presence timer
 		start_time = self.get_current_time()
 		payloads.rpc_timestamps["start"] = start_time
-		logger.debug("Payload timestamps -> start: " + str(start_time))
 
 		# Setting user activity details
 		payloads.rpc_complex_activity["details"] = activity_details
-		logger.debug("Payload activity -> details: " + activity_details)
 		payloads.rpc_complex_activity["state"] = activity_state
-		logger.debug("Payload activity -> state: " + activity_state)
 
 		# Setting proper activity type for payload args
 		payloads.rpc_args["activity"] = payloads.rpc_complex_activity
 
 		# Setting pid of running process
 		payloads.rpc_args["pid"] = self.pid
-		logger.debug("Payload args -> pid: " + str(self.pid))
 
 		# Setting unique uuid for payload
 		id = str(self.generate_uuid())
 		payloads.rpc["nonce"] = id
-		logger.debug("Payloads rpc -> nonce" + id)
 
-		logger.info("Discord Rich Presence payload created")
+		logger.info("Payload created")
 
 		# Sending ready Discord Rich Presence payload
 		self.send_data(1, payloads.rpc)
+		self.event_loop.run_until_complete(self.read_data())
