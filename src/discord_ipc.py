@@ -20,8 +20,22 @@ import threading
 import uuid
 
 # Configuring logger
-logging.basicConfig(format = "%(asctime)s: [%(levelname)s]: %(message)s", datefmt = "%d.%m.%Y (%H:%M:%S)", level = logging.DEBUG)
+logger_level = "INFO" # DEBUG or INFO
+
 logger = logging.getLogger(__name__)
+
+# logging.DEBUG level will be used to analyse errors
+# it will generate file with logs for developer to fix bugs
+# do not use logging.DEBUG level if it is not necessary
+if logger_level == "DEBUG":
+	logger.setLevel(logging.DEBUG)
+	handler = logging.FileHandler("discord_ipc.log")
+	handler.setLevel(logging.DEBUG)
+	log_format = logging.Formatter("%(asctime)s: [%(levelname)s]: %(message)s", datefmt = "%d.%m.%Y (%H:%M:%S)")
+	handler.setFormatter(log_format)
+	logger.addHandler(handler)
+else:
+	logging.basicConfig(format = "%(asctime)s: [%(levelname)s]: %(message)s", datefmt = "%d.%m.%Y (%H:%M:%S)", level = logging.INFO)
 
 class DiscordIPC:
 	"""
