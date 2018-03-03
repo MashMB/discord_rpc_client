@@ -221,9 +221,10 @@ class DiscordIPC:
 	def send_data(self, opcode, payload):
 		"""
 		Encoding data to send and 
-		sending encoded data to Discord app.
+		sending encoded data to Discord app
+		via Discord IPC socket.
 
-		:param op: Discord opcode that defines payload type
+		:param opcode: Discord opcode that defines payload type
 		:type op: int
 		:param payload: data that will be send to Discord app
 		(Discord commands) in proper appearance described
@@ -232,17 +233,17 @@ class DiscordIPC:
 		"""
 
 		logger.info("Trying to send payload to Discord...")
-		payload = json.dumps(payload) # Creating json file format from payload
-		logger.info("Creating data to send...")
-		# Presenting decoded data to send
-		data = str(opcode) + " " + str(len(payload)) + payload
-		logger.debug("Data ready to send: " + data)
+		logger.debug("Orginal data: " + str(opcode) + " " + str(len(payload)) + payload)
 		logger.info("Encoding data to send...")
-		# Encoding data that will be send
-		encoded_data = struct.pack("<ii", opcode, len(payload)) + payload.encode()
-		logger.debug("Encoded data ready to send: " + str(encoded_data))
-		# Sending data via socket created earlier (connect method)
-		self.soc.send(encoded_data)
+		# Encoding header
+		encoded_header = struct.pack("<ii", opcode, len(payload))
+		# Payload in json appearance
+		payload = json.dumps(payload)
+		# Encoding whole packet
+		encoded_data = encoded_header + payload.encode("utf-8")
+		logger.info("Data encoded")
+		logger.debug("Encoded data: " + str(encoded_data))
+		self.pipe_writer.write(encoded_data)
 		logger.info("Data sent")
 
 	def send_simple_rich_presence(self, activity_details, activity_state):
