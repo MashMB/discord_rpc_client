@@ -185,38 +185,28 @@ class DiscordIPC:
 		self.is_connected = True
 		logger.info("Connection with Discord established")
 
-	def read_data(self):
+	async def read_data(self):
 		"""
 		Reciving and decoding data from Discord
-		via thread to keep connection alive.
+		in asynchronous way.
 		"""
 
-		# Recive date while connection is keep alive
-		while self.is_connected:
-			try:
-				logger.info("Waiting for data from Discord...")
-				# Recive data on network socket
-				recived_data = self.soc.recv(1024)
+		logger.info("Getting data from Discord...")
 
-				# When recived data is not empty
-				if str(recived_data) != "b\'\'":
-					logger.info("Data recived")
-					logger.debug("Recived encoded data: " + str(recived_data))
-					logger.info("Decoding recived data...")
-					# Decode packet header
-					decoded_header = struct.unpack("<ii", recived_data[:8])
-					# Decode packet (json format)
-					decoded_data = json.loads(recived_data[8:].decode("utf-8"))
-					opcode = decoded_header[0]
-					data_length = decoded_header[1]
-					logger.debug("Recived decoded data: " + str(opcode) + " " + str(data_length) + repr(decoded_data))
-					logger.info("Recived data decoded")
-				else:
-					logger.info("Waiting for data from Discord timeouted")
-			except Exception:
-				# There can be exception connected to unpacking data header
-				logger.error("Recived data could not be decoded")
-				break
+		try:
+			# Read data from Discord IPC socket
+			recived_data = await self.pipe_reader.read(1024)
+			logger.info("Data recived")
+			logger.debug("Recived data: " + str(recived_data))
+			logger.info("Decoding recived data...")
+			decoded_header = struct.unpack("<ii", recived_data[:8])
+			# Decoding data in json format
+			decoded_data = json.loads(recived_data[8:].decode("utf-8"))
+			loger.info("Recived data decoded")
+			logger.info("Decoded data: " + str(decoded_header[0]) + " " + str(decoded_header[1]) + decoded_data)
+		except Exception as ex:
+			logger.error("Cannot get data from Discord")
+			logger.debug("Error: " + str(ex))
 
 	def send_data(self, opcode, payload):
 		"""
