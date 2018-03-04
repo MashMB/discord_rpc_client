@@ -1,0 +1,445 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Discord IPC wrapper &mdash; Discord Rich Presence Client 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="Discord Rich Presence Client 1.0.0 documentation" href="../index.html"/>
+        <link rel="next" title="OS Dependencies" href="os_dependencies.html"/>
+        <link rel="prev" title="Welcome to documentation of Discord Rich Presence Client!" href="../index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Discord Rich Presence Client
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Discord IPC wrapper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="os_dependencies.html">OS Depenedencies</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="os_dependencies.html#supported-platforms">Supported platforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="os_dependencies.html#localizations-for-specific-platforms-where-discord-ipc-socket-can-be-found">Localizations for specific platforms where Discord IPC socket can be found</a></li>
+<li class="toctree-l2"><a class="reference internal" href="os_dependencies.html#expected-socket-name">Expected socket name</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="payloads.html">Payloads</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="payloads.html#payload-template-for-handshaking">Payload template for handshaking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="payloads.html#json-template-for-rpc-assets-section">Json template for rpc assets section</a></li>
+<li class="toctree-l2"><a class="reference internal" href="payloads.html#json-template-for-rpc-timestamps-section">Json template for rpc timestamps section</a></li>
+<li class="toctree-l2"><a class="reference internal" href="payloads.html#json-template-for-rpc-complex-full-activity-section">Json template for rpc complex (full) activity section</a></li>
+<li class="toctree-l2"><a class="reference internal" href="payloads.html#json-template-for-rpc-simple-activity-section">Json template for rpc simple activity section</a></li>
+<li class="toctree-l2"><a class="reference internal" href="payloads.html#json-template-for-rpc-args-section">Json template for rpc args section</a></li>
+<li class="toctree-l2"><a class="reference internal" href="payloads.html#payload-template-for-discord-rich-presence">Payload template for Discord Rich Presence</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="discord_rpc_client.html">Discord RPC Client</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Discord Rich Presence Client</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Discord IPC wrapper</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="discord-ipc-wrapper">
+<h1>Discord IPC wrapper<a class="headerlink" href="#discord-ipc-wrapper" title="Permalink to this headline">¶</a></h1>
+<p>Simple Discord IPC wrapper that gives opportunity
+to use Discord Rich Presence for example.</p>
+<dl class="class">
+<dt id="DiscordIPC">
+<em class="property">class </em><code class="descname">DiscordIPC</code><a class="headerlink" href="#DiscordIPC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connecting to Discord app installed locally,
+sending commands, handling responses.</p>
+<dl class="method">
+<dt id="DiscordIPC.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>self</em>, <em>client_id</em><span class="sig-paren">)</span><a class="headerlink" href="#DiscordIPC.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>DiscordIPC constructor.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>client_id</strong> (<em>string</em>) – unique Discord client ID generated for application created in Discord web panel for developers</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="DiscordIPC.get_current_time">
+<code class="descname">get_current_time</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span><a class="headerlink" href="#DiscordIPC.get_current_time" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get current time from system clock.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">current time from system clock in seconds</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="DiscordIPC.get_system_name">
+<code class="descname">get_system_name</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span><a class="headerlink" href="#DiscordIPC.get_system_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getting system name and checking
+if running OS is supported. Supported OS:
+Windows, Linux, MacOS.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">running OS name (lowercase)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="DiscordIPC.get_ipc_socket">
+<code class="descname">get_ipc_socket</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span><a class="headerlink" href="#DiscordIPC.get_ipc_socket" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searching for Discord IPC socket. Different localizations
+to search for on different platforms.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">path to Discord IPC socket</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">string</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="DiscordIPC.generate_uuid">
+<code class="descname">generate_uuid</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span><a class="headerlink" href="#DiscordIPC.generate_uuid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generating unique uuid.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">unique uuid</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">uuid</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="DiscordIPC.connect">
+<code class="descname">connect</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span><a class="headerlink" href="#DiscordIPC.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Trying connect to Discord. Connection is established
+when Discord recives initial message and responses
+for the message.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="DiscordIPC.disconnect">
+<code class="descname">disconnect</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span><a class="headerlink" href="#DiscordIPC.disconnect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disconnecting from Discord by terminating
+asynchronous methods and Thread that
+keeps connection alive, reseting all components.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">async handshake(self)</code></dt>
+<dd><p>Handshaking with Discord (negotiation between two
+communicating participants) in asynchronous way.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="DiscordIPC.keep_conncetion_alive">
+<code class="descname">keep_conncetion_alive</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span><a class="headerlink" href="#DiscordIPC.keep_conncetion_alive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Keeping connection alive. No timeout
+functions for fast terminating.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">async proper_close(self)</code></dt>
+<dd><p>Using asyncio.ProactorEventLoop() on Windows
+causes some errors while terminationg pipe connection and
+after that immediately closing main event loop. This
+easy hack repairs it.</p>
+</dd></dl>
+
+<dl class="method">
+<dt>
+<code class="descname">async read_data(self)</code></dt>
+<dd><p>Reciving and decoding data from Discord
+in asynchronous way.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="DiscordIPC.send_data">
+<code class="descname">send_data</code><span class="sig-paren">(</span><em>self</em>, <em>opcode</em>, <em>payload</em><span class="sig-paren">)</span><a class="headerlink" href="#DiscordIPC.send_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encoding data to send and
+sending encoded data to Discord app
+via Discord IPC socket.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>opcode</strong> – Discord opcode that defines payload type</li>
+<li><strong>payload</strong> (<em>string</em>) – data that will be send to Discord app (Discord commands) in proper appearance described on Discord website - developers section</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="DiscordIPC.send_simple_rich_presence">
+<code class="descname">send_simple_rich_presence</code><span class="sig-paren">(</span><em>self</em>, <em>activity_details</em>, <em>activity_state</em><span class="sig-paren">)</span><a class="headerlink" href="#DiscordIPC.send_simple_rich_presence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creating and sending simple Discord Rich Presence payload to Discord.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>activity_details</strong> (<em>string</em>) – main description of activity</li>
+<li><strong>activity_state</strong> (<em>string</em>) – additional description of activity</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="DiscordIPC.send_complex_rich_presence">
+<code class="descname">send_complex_rich_presence</code><span class="sig-paren">(</span><em>self</em>, <em>large_text</em>, <em>large_image</em>, <em>small_text</em>, <em>small_image</em>, <em>activity_details</em>, <em>activity_state</em><span class="sig-paren">)</span><a class="headerlink" href="#DiscordIPC.send_complex_rich_presence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creating and sending complex (full) Discord Rich Presence payload to Discord.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>large_text</strong> (<em>string</em>) – text to display when large image is hovered</li>
+<li><strong>large_image</strong> (<em>string</em>) – name of large image asset seted on Discord developers website</li>
+<li><strong>small_text</strong> (<em>string</em>) – text to display when small image is hovered</li>
+<li><strong>small_image</strong> (<em>string</em>) – name of small image asset seted on Discord developers website</li>
+<li><strong>activity_details</strong> (<em>string</em>) – main description of activity</li>
+<li><strong>activity_state</strong> (<em>string</em>) – additional description of activity</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="os_dependencies.html" class="btn btn-neutral float-right" title="OS Dependencies" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../index.html" class="btn btn-neutral" title="Welcome to documentation of Discord Rich Presence Client!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Maciej Bedra.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1.0.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
