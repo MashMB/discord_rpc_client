@@ -123,3 +123,4 @@ SOFTWARE.
 	:hidden:
 
 	Discord IPC wrapper <docs/discord_ipc>
+	OS Depenedencies <docs/os_dependencies>
