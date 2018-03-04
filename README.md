@@ -8,7 +8,7 @@ Discord is one of the most popular communicator all over the world. Discord ensu
 Discord Rich Presence allows you to show other users in the community what are you doing right now in really elegant and efficient way. You can display status message, activity description, timestamp when you started and give opportunity to specte or join the game that you are actually playing.
 
 ## About this project
-There is official Discord Rich Presence API ([discord-rpc](https://github.com/discordapp/discord-rpc)) but officialy it supports only C, C++, Unity and Unreal Engine. There are also featured some unofficial wrappers in other languages but not in Python. This project contains the simple wrapper written in Python to communicate with Discord app via [inter-process communication techniques](https://en.wikipedia.org/wiki/Inter-process_communication). 
+There is official Discord Rich Presence API ([discord-rpc](https://github.com/discordapp/discord-rpc)) but officially it supports only C, C++, Unity and Unreal Engine. There are also featured some unofficial wrappers in other languages but not in Python. This project contains the simple wrapper written in Python to communicate with Discord app via [inter-process communication techniques](https://en.wikipedia.org/wiki/Inter-process_communication). 
 
 
 In the package you can find: 
@@ -65,7 +65,7 @@ After that run program:
 python discrod_rpc_client.py
 ```
 
-Open discord_ipc.log file and copy the conent.
+Open discord_ipc.log file and copy the content.
 
 ## License
 The MIT License (MIT)
