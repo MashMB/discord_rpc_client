@@ -30,7 +30,7 @@ rpc_complex_activity = {
 	"details": None,
 	"state": None,
 	"timestamps": rpc_timestamps,
-	"asstes": rpc_assets
+	"assets": rpc_assets
 }
 
 # Json template for rpc simple activity section

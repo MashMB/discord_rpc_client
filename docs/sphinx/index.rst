@@ -83,6 +83,8 @@ Replace line 23 in **discord_ipc.py** with:
 
 	logger_level = "DEBUG"
 
+Ensure that file **discord_ipc.log** does not exist in folder where **discord_ipc.py** is. If file exists, delete it.
+
 After that run program:
 
 .. code-block:: python
@@ -90,7 +92,7 @@ After that run program:
 	python discrod_rpc_client.py
 
 
-Open discord_ipc.log file and copy the content.
+Open **discord_ipc.log** file and copy the content.
 
 =======
 License
