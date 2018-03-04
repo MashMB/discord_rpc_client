@@ -125,3 +125,4 @@ SOFTWARE.
 	Discord IPC wrapper <docs/discord_ipc>
 	OS Depenedencies <docs/os_dependencies>
 	Payloads <docs/payloads>
+	Discord RPC Client <docs/discord_rpc_client>

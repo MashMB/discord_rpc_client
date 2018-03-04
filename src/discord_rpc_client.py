@@ -15,7 +15,7 @@ def main():
 	"""
 
 	"""
-	Create instance of DiscordIPC class
+	Create instance of DiscordIPC class.
 	Where ClientID paste your token generated
 	on Discord developers website.
 	"""
