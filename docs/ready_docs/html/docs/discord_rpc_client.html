@@ -1,0 +1,289 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Discord Rich Presence Client &mdash; Discord Rich Presence Client 1.0.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="Discord Rich Presence Client 1.0.0 documentation" href="../index.html"/>
+        <link rel="prev" title="Payloads" href="payloads.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Discord Rich Presence Client
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="discord_ipc.html">Discord IPC wrapper</a></li>
+<li class="toctree-l1"><a class="reference internal" href="os_dependencies.html">OS Depenedencies</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="os_dependencies.html#supported-platforms">Supported platforms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="os_dependencies.html#localizations-for-specific-platforms-where-discord-ipc-socket-can-be-found">Localizations for specific platforms where Discord IPC socket can be found</a></li>
+<li class="toctree-l2"><a class="reference internal" href="os_dependencies.html#expected-socket-name">Expected socket name</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="payloads.html">Payloads</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="payloads.html#payload-template-for-handshaking">Payload template for handshaking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="payloads.html#json-template-for-rpc-assets-section">Json template for rpc assets section</a></li>
+<li class="toctree-l2"><a class="reference internal" href="payloads.html#json-template-for-rpc-timestamps-section">Json template for rpc timestamps section</a></li>
+<li class="toctree-l2"><a class="reference internal" href="payloads.html#json-template-for-rpc-complex-full-activity-section">Json template for rpc complex (full) activity section</a></li>
+<li class="toctree-l2"><a class="reference internal" href="payloads.html#json-template-for-rpc-simple-activity-section">Json template for rpc simple activity section</a></li>
+<li class="toctree-l2"><a class="reference internal" href="payloads.html#json-template-for-rpc-args-section">Json template for rpc args section</a></li>
+<li class="toctree-l2"><a class="reference internal" href="payloads.html#payload-template-for-discord-rich-presence">Payload template for Discord Rich Presence</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Discord RPC Client</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Discord Rich Presence Client</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Discord Rich Presence Client</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="discord-rich-presence-client">
+<h1>Discord Rich Presence Client<a class="headerlink" href="#discord-rich-presence-client" title="Permalink to this headline">¶</a></h1>
+<p>Main entry point.</p>
+<dl class="function">
+<dt id="main">
+<code class="descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Short example how to set Discord Rich Presence
+via Discord IPC wrapper.</p>
+<p>Create instance of DiscordIPC class. Where <strong>ClientID</strong> paste your token generated on Discord developers website.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ipc</span> <span class="o">=</span> <span class="n">discord_ipc</span><span class="o">.</span><span class="n">DiscordIPC</span><span class="p">(</span><span class="s2">&quot;ClientID&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Connect to Discord.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ipc</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Send Discord Rich Presence status to Discord just change method parameters.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># activity_details = description of main user activity</span>
+<span class="c1"># activity_state = additional description of user activity</span>
+<span class="n">ipc</span><span class="o">.</span><span class="n">send_simple_rich_presence</span><span class="p">(</span><span class="s2">&quot;activity_details&quot;</span><span class="p">,</span> <span class="s2">&quot;activity_state&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>There is also support for complex Discord Rich Presence payload (changing images, not only texts).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Replace line:</span>
+<span class="c1"># ipc.send_complex_rich_presence(&quot;activity_details&quot;, &quot;activity_state&quot;) #</span>
+<span class="c1"># with:</span>
+<span class="c1"># ipc.send_rich_presence(&quot;large_text&quot;, &quot;large_image&quot;, &quot;small_text&quot;, &quot;small_image&quot;, &quot;activity_details&quot;, &quot;activity_state&quot;) #</span>
+<span class="c1"># large_text = text that will be displayed on large image hover</span>
+<span class="c1"># large_image = name of large image file, seted on Discord developers website (will display as application logo)</span>
+<span class="c1"># small_text = text that will be displayed on small image hover</span>
+<span class="c1"># small_image = name of small image file, seted on Discord developers website (will display in right bottom corner of large image)</span>
+<span class="c1"># activity_details = description of main user activity</span>
+<span class="c1"># activity_state = additional description of user activity</span>
+</pre></div>
+</div>
+<p>Give program some time to see the changes in Discord.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Disconnect from Discord.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ipc</span><span class="o">.</span><span class="n">disconnect</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="payloads.html" class="btn btn-neutral" title="Payloads" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Maciej Bedra.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1.0.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
