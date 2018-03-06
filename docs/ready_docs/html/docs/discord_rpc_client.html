@@ -193,9 +193,9 @@ via Discord IPC wrapper.</p>
 </div>
 <p>There is also support for complex Discord Rich Presence payload (changing images, not only texts).</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Replace line:</span>
-<span class="c1"># ipc.send_complex_rich_presence(&quot;activity_details&quot;, &quot;activity_state&quot;) #</span>
+<span class="c1"># ipc.send_simple_rich_presence(&quot;activity_details&quot;, &quot;activity_state&quot;) #</span>
 <span class="c1"># with:</span>
-<span class="c1"># ipc.send_rich_presence(&quot;large_text&quot;, &quot;large_image&quot;, &quot;small_text&quot;, &quot;small_image&quot;, &quot;activity_details&quot;, &quot;activity_state&quot;) #</span>
+<span class="c1"># ipc.send_complex_rich_presence(&quot;large_text&quot;, &quot;large_image&quot;, &quot;small_text&quot;, &quot;small_image&quot;, &quot;activity_details&quot;, &quot;activity_state&quot;) #</span>
 <span class="c1"># large_text = text that will be displayed on large image hover</span>
 <span class="c1"># large_image = name of large image file, seted on Discord developers website (will display as application logo)</span>
 <span class="c1"># small_text = text that will be displayed on small image hover</span>
