@@ -39,11 +39,11 @@ def main():
 	There is also support for complex Discord Rich Presence payload
 	(changing images, not only texts) just replace this line:
 
-	# ipc.send_complex_rich_presence("activity_details", "activity_state") #
+	# ipc.send_simple_rich_presence("activity_details", "activity_state") #
 
 	with this line:
 		
-	# ipc.send_rich_presence("large_text", "large_image", "small_text", "small_image", "activity_details", "activity_state") #
+	# ipc.send_complex_rich_presence("large_text", "large_image", "small_text", "small_image", "activity_details", "activity_state") #
 
 	large_text = text that will be displayed on large image hover
 
