@@ -148,6 +148,7 @@ class DiscordIPC:
 
 			try:
 				logger.info("Trying connect to Discord...")
+				# Start activity timer when trying to connect to Discord
 				self.start_activity_time = self.get_current_time()
 
 				# Create main event loop
