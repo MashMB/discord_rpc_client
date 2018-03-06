@@ -159,7 +159,7 @@ class DiscordIPC:
 				# Keep connection alive when handshake passes
 				self.discord_listener.start()
 				logger.info("Keeping connection alive...")
-			except ConnectionRefusedError:
+			except Exception:
 				logger.error("Can not connect to Discord (probably Discord app is not opened)")
 				sys.exit()
 				
