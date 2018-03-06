@@ -58,6 +58,7 @@ class DiscordIPC:
 		self.ipc_socket = self.get_ipc_socket()
 		self.pid = os.getpid()
 		self.discord_listener = threading.Thread(name = "discord_listener", target = self.keep_conncetion_alive)
+		self.start_activity_time = None
 		self.event_loop = None
 		self.pipe_writer = None
 		self.pipe_reader = None
@@ -147,6 +148,8 @@ class DiscordIPC:
 
 			try:
 				logger.info("Trying connect to Discord...")
+				# Start activity timer when trying to connect to Discord
+				self.start_activity_time = self.get_current_time()
 
 				# Create main event loop
 				if self.system_name == os_dependencies.supported[0]:
@@ -159,7 +162,7 @@ class DiscordIPC:
 				# Keep connection alive when handshake passes
 				self.discord_listener.start()
 				logger.info("Keeping connection alive...")
-			except ConnectionRefusedError:
+			except Exception:
 				logger.error("Can not connect to Discord (probably Discord app is not opened)")
 				sys.exit()
 				
@@ -181,6 +184,7 @@ class DiscordIPC:
 		self.pipe_writer = None
 		self.pipe_reader = None
 		self.event_loop = None
+		self.start_activity_time = None
 		logger.info("Disconncted")
 
 	async def handshake(self):
@@ -246,9 +250,8 @@ class DiscordIPC:
 			decoded_data = json.loads(recived_data[8:].decode("utf-8"))
 			logger.info("Recived data decoded")
 			logger.debug("Decoded data: " + "(" + str(decoded_header[0]) + ", " + str(decoded_header[1]) + ")" + str(decoded_data))
-		except Exception as ex:
+		except Exception:
 			logger.error("Cannot get data from Discord")
-			logger.debug("Error: " + str(ex))
 
 	def send_data(self, opcode, payload):
 		"""
@@ -289,8 +292,7 @@ class DiscordIPC:
 		logger.info("Creating Discord Rich Presence payload...")
 
 		# Setting start time for Discord Rich Presence timer
-		start_time = self.get_current_time()
-		payloads.rpc_timestamps["start"] = start_time
+		payloads.rpc_timestamps["start"] = self.start_activity_time
 
 		# Setting user activity details
 		payloads.rpc_simple_activity["details"] = activity_details
@@ -339,8 +341,7 @@ class DiscordIPC:
 		payloads.rpc_assets["small_image"] = small_image
 
 		# Setting start time for Discord Rich Presence timer
-		start_time = self.get_current_time()
-		payloads.rpc_timestamps["start"] = start_time
+		payloads.rpc_timestamps["start"] = self.start_activity_time
 
 		# Setting user activity details
 		payloads.rpc_complex_activity["details"] = activity_details
