@@ -84,17 +84,13 @@ class DiscordIPC:
 		"""
 
 		logger.info("Recognizing running OS...")
-		# Get system name
 		system_name = platform.system()
 		logger.info("Running OS: " + system_name)
-		# Format system name string for next operations
 		system_name = system_name.lower()
 
-		# If OS is supported, return name
 		if system_name in os_dependencies.supported:
 			return system_name
 		else:
-			# Unsupported OS warning for user
 			logger.warning("Unsupported OS")
 			sys.exit()
 
@@ -108,9 +104,8 @@ class DiscordIPC:
 		"""
 
 		logger.info("Searching for Discord IPC socket...")
-		ipc_socket = None # Variable for path to Discord IPC socket
+		ipc_socket = None
 
-		# Different Discord IPC socket localization on different platforms
 		if self.system_name == os_dependencies.supported[0]:
 			ipc_socket = os_dependencies.localizations["windows"] + "\\" + os_dependencies.socket_name[0]
 		else:
@@ -148,18 +143,14 @@ class DiscordIPC:
 
 			try:
 				logger.info("Trying connect to Discord...")
-				# Start activity timer when trying to connect to Discord
 				self.start_activity_time = self.get_current_time()
 
-				# Create main event loop
 				if self.system_name == os_dependencies.supported[0]:
 					self.event_loop = asyncio.ProactorEventLoop()
 				else:
 					self.event_loop = asyncio.get_event_loop()
 
-				# Send inital message and wait for response
 				self.event_loop.run_until_complete(self.handshake())
-				# Keep connection alive when handshake passes
 				self.discord_listener.start()
 				logger.info("Keeping connection alive...")
 			except Exception:
@@ -195,7 +186,6 @@ class DiscordIPC:
 
 		logger.info("Trying to handshake with Discord...")
 
-		# Different pipe support on different platform
 		if self.system_name == os_dependencies.supported[0]:
 			logger.debug("Creating pipe connection with Discord IPC socket...")
 			self.pipe_reader = asyncio.StreamReader(loop = self.event_loop)
@@ -205,9 +195,7 @@ class DiscordIPC:
 			self.pipe_reader, self.pipe_writer = await asyncio.open_unix_connection(self.ipc_socket, loop = self.event_loop)
 
 		payloads.handshake["client_id"] = self.client_id
-		# Sending initial payload
 		self.send_data(0, payloads.handshake)
-		# Connection is established only if Discord app responses for initial payload
 		await self.read_data()
 		self.is_connected = True
 		logger.info("Connection with Discord established")
@@ -240,13 +228,11 @@ class DiscordIPC:
 		logger.info("Getting data from Discord...")
 
 		try:
-			# Read data from Discord IPC socket
 			recived_data = await self.pipe_reader.read(1024)
 			logger.info("Data recived")
 			logger.debug("Recived data: " + str(recived_data))
 			logger.info("Decoding recived data...")
 			decoded_header = struct.unpack("<ii", recived_data[:8])
-			# Decoding data in json format
 			decoded_data = json.loads(recived_data[8:].decode("utf-8"))
 			logger.info("Recived data decoded")
 			logger.debug("Decoded data: " + "(" + str(decoded_header[0]) + ", " + str(decoded_header[1]) + ")" + str(decoded_data))
@@ -270,9 +256,7 @@ class DiscordIPC:
 		logger.info("Trying to send payload to Discord...")
 		logger.debug("Orginal data: " + "(" + str(opcode) + ", " + str(len(payload)) + ")" + str(payload))
 		logger.info("Encoding data to send...")
-		# Payload in json appearance
 		payload = json.dumps(payload)
-		# Encoding packet with header creation
 		encoded_data = struct.pack("<ii", opcode, len(payload)) + payload.encode("utf-8")
 		logger.info("Data encoded")
 		logger.debug("Encoded data: " + str(encoded_data))
