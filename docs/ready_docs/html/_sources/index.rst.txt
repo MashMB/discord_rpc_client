@@ -68,7 +68,7 @@ OS			status
 ===============	==========
 **Windows**		*tested*
 **Linux**		*tested*
-**MacOS**		*untested*
+**MacOS**		*tested*
 ===============	==========
 
 ===============

@@ -50,7 +50,7 @@ Community should see that your status changed!
 |:----------:|:----------:|
 |**Windows**|:white_check_mark: *tested*|
 |**Linux**|:white_check_mark: *tested*|
-|**MacOS**|:x: *untested*|
+|**MacOS**|:white_check_mark: *tested*|
 
 ## Bugs and issues
 If any error occured, I will be really happy to help you with the problem but it will be nice to see the error message. You can change logger mode and paste log contnet into [GitHub issue page](https://github.com/MashMB/discord_rpc_client/issues). 
