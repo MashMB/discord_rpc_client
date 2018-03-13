@@ -7,6 +7,7 @@ to use Discord Rich Presence.
 """
 
 import logging
+import os
 import os_dependencies
 import platform
 import sys
@@ -37,6 +38,35 @@ class DiscordIPC:
 
 		self.client_id = client_id
 		self.is_connected = False
+		self.ipc_socket = self.get_ipc_socket()
+
+	def get_ipc_socket(self):
+		"""
+		Searching for Discord IPC socket. Different localizations
+		to search for on different platforms.
+
+		:returns: path to Discord IPC socket
+		:rtype: string
+		"""
+
+		logger.info("Searching for Discord IPC socket...")
+		ipc_socket = None
+
+		if self.system_name == os_dependencies.supported[0]:
+			ipc_socket = os_dependencies.localizations["windows"] + "\\" + os_dependencies.socket_name[0]
+		else:
+			for path in os_dependencies.localizations["unix"]:
+				if os.environ.get(path, None) != None:
+					ipc_socket = os.environ.get(path) + "/" + os_dependencies.socket_name[0]
+					break
+
+			if ipc_socket == None:
+				ipc_socket = "/tmp" + os_dependencies.socket_name[0]
+
+		logger.info("Discord IPC socket found")
+		logger.debug("Path to Discord IPC socket: " + ipc_socket)
+
+		return ipc_socket
 
 	def get_system_name(self):
 		"""
