@@ -12,6 +12,7 @@ import os
 import os_dependencies
 import platform
 import sys
+import time
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(format = "%(asctime)s: [%(levelname)s]: %(message)s", datefmt = "%d.%m.%Y (%H:%M:%S)", level = logging.DEBUG)
@@ -90,6 +91,15 @@ class DiscordIPC:
 			return system_name
 		else:
 			raise Exception("Unsupported OS")
+
+	def keep_connection_alive(self):
+		"""
+		Simple mechanism to keep connection
+		alive by thread.
+		"""
+
+		while self.is_connected:
+			time.sleep(0.1)
 
 	def read_data(self):
 		"""
