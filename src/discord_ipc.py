@@ -91,6 +91,38 @@ class DiscordIPC:
 		else:
 			raise Exception("Unsupported OS")
 
+	def read_data(self):
+		"""
+		Reciving and decoding data from Discord.
+		"""
+
+		logger.info("Getting data from Discord...")
+
+		try:
+			encoded_header = b""
+			header_remaining_size = 8
+
+			while header_remaining_size:
+				encoded_header += self.ipc_socket.read(header_size)
+				header_remaining_size -= len(encoded_header)
+
+			decoded_header = struct.unpack("<ii", encoded_header)
+			encoded_data = ""
+			packet_remaining_size = int(decoded_header[1])
+
+			while packet_remaining_size:
+				encoded_data += self.ipc_socket.read(packet_remaining_size)
+				packet_remaining_size -= len(encoded_data)
+
+			logger.info("Data recived")
+			logger.debug("Recived data: " + str(encoded_header) + str(encoded_data))
+			logger.info("Decodnig recived data...")
+			decoded_data = json.loads(encoded_data.decode("utf-8"))
+			logger.info("Recived data decoded")
+			logger.debug("Decoded data: (" + str(decoded_header[0]) + ", " + str(decoded_header[1]) + str(decoded_data))
+		except Exception:
+			logger.error("Cannot get data from Discord")
+
 	def send_data(self, opcode, payload):
 		"""
 		Encoding data to send and sending
