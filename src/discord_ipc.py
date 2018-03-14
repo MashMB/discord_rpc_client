@@ -6,6 +6,7 @@ Simple Discord IPC wrapper that gives opportunity
 to use Discord Rich Presence.
 """
 
+import json
 import logging
 import os
 import os_dependencies
@@ -89,3 +90,28 @@ class DiscordIPC:
 			return system_name
 		else:
 			raise Exception("Unsupported OS")
+
+	def send_data(self, opcode, payload):
+		"""
+		Encoding data to send and sending
+		encoded data to Discord app via
+		Discord IPC socket.
+
+		:param opcode: Discord opcode that defines payload type
+		:type opcode: int
+		:param payload: data that will be send to Discord app
+		(Discord commands) in proper appearance described
+		on Discord website (developers section)
+		:type payload: string
+		"""
+
+		logger.info("Trying to send payload to Discord...")
+		logger.debug("Orginal data: (" + str(opcode) + ", " + str(len(payload)) + ")" + str(payload))
+		logger.info("Encoding data to send...")
+		payload = json.dumps(payload)
+		encoded_data = struct.pack("<ii" + opcode, len(payload)) + payload.encode("utf-8")
+		logger.info("Data encoded")
+		logger.debug("Encoded data: " + str(encoded_data))
+		self.ipc_socket.write(encoded_data)
+		self.ipc_socket.flush()
+		logger.info("Data sent")
