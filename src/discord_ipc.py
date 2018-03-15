@@ -18,7 +18,7 @@ import time
 import uuid
 
 # Configuring logger
-logger_level = "INFO" # DEBUG or INFO
+logger_level = "DEBUG" # DEBUG or INFO
 
 logger = logging.getLogger(__name__)
 
@@ -203,7 +203,7 @@ class DiscordIPC:
 			logger.info("Decodnig recived data...")
 			decoded_data = json.loads(encoded_data.decode("utf-8"))
 			logger.info("Recived data decoded")
-			logger.debug("Decoded data: (" + str(decoded_header[0]) + ", " + str(decoded_header[1]) + str(decoded_data))
+			logger.debug("Decoded data: (" + str(decoded_header[0]) + ", " + str(decoded_header[1]) + ")" + str(decoded_data))
 		except Exception:
 			logger.error("Cannot get data from Discord")
 			sys.exit(1)
