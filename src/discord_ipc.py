@@ -3,10 +3,9 @@ File name: discord_ipc.py
 Author: Maciej Bedra
 
 Simple Discord IPC wrapper that gives opportunity 
-to use Discord Rich Presence for example.
+to use Discord Rich Presence.
 """
 
-import asyncio
 import json
 import logging
 import os
@@ -16,17 +15,18 @@ import platform
 import struct
 import sys
 import time
-import threading
 import uuid
 
 # Configuring logger
-logger_level = "INFO" # DEBUG or INFO
+logger_level = "DEBUG" # DEBUG or INFO
 
 logger = logging.getLogger(__name__)
 
-# logging.DEBUG level will be used to analyse errors
-# it will generate file with logs for developer to fix bugs
-# do not use logging.DEBUG level if it is not necessary
+"""
+logging.DEBUG level will be used to analyse errors,
+it will generate file with logs for developer to fix bugs,
+do not use logging.DEBUG level if it is not necessary
+"""
 if logger_level == "DEBUG":
 	logger.setLevel(logging.DEBUG)
 	handler = logging.FileHandler("discord_ipc.log")
@@ -47,21 +47,23 @@ class DiscordIPC:
 		"""
 		DiscordIPC constructor.
 
-		:param client_id: unique Discord client ID generated 
-		for application created in Discord web panel for developers
+		:param client_id: unique Discord client ID generated on 
+		Discord website (developers section)
 		:type client_id: string
 		"""
 
+		try:
+			self.system_name = self.get_system_name()
+		except Exception:
+			logger.warning("Unsupported OS")
+			sys.exit(1)
+
 		self.client_id = client_id
 		self.is_connected = False
-		self.system_name = self.get_system_name()
+		self.start_activity_time = None
+		self.pipe = None
 		self.ipc_socket = self.get_ipc_socket()
 		self.pid = os.getpid()
-		self.discord_listener = threading.Thread(name = "discord_listener", target = self.keep_conncetion_alive)
-		self.start_activity_time = None
-		self.event_loop = None
-		self.pipe_writer = None
-		self.pipe_reader = None
 
 	def get_current_time(self):
 		"""
@@ -72,27 +74,6 @@ class DiscordIPC:
 		"""
 
 		return time.time()
-
-	def get_system_name(self):
-		"""
-		Getting system name and checking 
-		if running OS is supported. Supported OS:
-		Windows, Linux, MacOS.
-
-		:returns: running OS name (lowercase)
-		:rtype: string
-		"""
-
-		logger.info("Recognizing running OS...")
-		system_name = platform.system()
-		logger.info("Running OS: " + system_name)
-		system_name = system_name.lower()
-
-		if system_name in os_dependencies.supported:
-			return system_name
-		else:
-			logger.warning("Unsupported OS")
-			sys.exit()
 
 	def get_ipc_socket(self):
 		"""
@@ -110,9 +91,9 @@ class DiscordIPC:
 			ipc_socket = os_dependencies.localizations["windows"] + "\\" + os_dependencies.socket_name[0]
 		else:
 			for path in os_dependencies.localizations["unix"]:
-					if os.environ.get(path, None) != None:
-						ipc_socket = os.environ.get(path) + "/" + os_dependencies.socket_name[0]
-						break
+				if os.environ.get(path, None) != None:
+					ipc_socket = os.environ.get(path) + "/" + os_dependencies.socket_name[0]
+					break
 
 			if ipc_socket == None:
 				ipc_socket = "/tmp" + os_dependencies.socket_name[0]
@@ -128,175 +109,134 @@ class DiscordIPC:
 
 		:returns: unique uuid
 		:rtype: uuid
-		"""
+		"""		
 
 		return uuid.uuid4()
 
+	def get_system_name(self):
+		"""
+		Getting system name and checking if running OS
+		is supported. Supported OS: Windows, Linux MacOS.
+
+		:returns: running OS name (lowercase)
+		:rtype: string
+		:raise Exception: if running OS is not included in supported
+		OS list, raise the Exception
+		"""
+
+		logger.info("Recognizing running OS...")
+		system_name = platform.system()
+		logger.info("Running OS: " + system_name)
+		system_name = system_name.lower()
+		
+		if system_name in os_dependencies.supported:
+			logger.info("Supported OS")
+			return system_name
+		else:
+			raise Exception("Unsupported OS")
+
 	def connect(self):
 		"""
-		Trying connect to Discord. Connection is established
-		when Discord recives initial message and responses
-		for the message.
+		Trying to connect to Discord. Connection will be
+		established only when handshake (initial message 
+		from client and response from Discord) passes.
 		"""
 
 		if not self.is_connected:
-
+			logger.info("Trying to connect to Discord...")
+			
 			try:
-				logger.info("Trying connect to Discord...")
-				self.start_activity_time = self.get_current_time()
-
-				if self.system_name == os_dependencies.supported[0]:
-					self.event_loop = asyncio.ProactorEventLoop()
-				else:
-					self.event_loop = asyncio.get_event_loop()
-
-				self.event_loop.run_until_complete(self.handshake())
-				self.discord_listener.start()
-				logger.info("Keeping connection alive...")
+				self.pipe = open(self.ipc_socket, "w+b")
 			except Exception:
-				logger.error("Can not connect to Discord (probably Discord app is not opened)")
-				sys.exit()
-				
+				logger.error("Cannot connect to Discord (probably Discord app is not opened)")
+				sys.exit(1)
+
+			logger.info("Trying to handshake with Discord...")
+			payloads.handshake["client_id"] = self.client_id
+			self.send_data(0, payloads.handshake)
+			self.read_data()
+			self.is_connected = True
+			self.start_activity_time = self.get_current_time()
+			logger.info("Connection with Discord established")
 		else:
 			logger.warning("Already connected to Discord")
 
 	def disconnect(self):
 		"""
-		Disconnecting from Discord by terminating
-		asynchronous methods and Thread that
-		keeps connection alive, reseting all components.
+		Disconnecting from Discord by sending close 
+		signal to Discord and closing pipe connection, 
+		reseting varaibles.
 		"""
 
 		logger.info("Disconnecting from Discord...")
-		self.pipe_writer.close()
-		self.event_loop.run_until_complete(self.proper_close())
-		self.event_loop.close()
+		self.send_data(2, {})
+		self.pipe.close()
 		self.is_connected = False
-		self.pipe_writer = None
-		self.pipe_reader = None
-		self.event_loop = None
 		self.start_activity_time = None
-		logger.info("Disconncted")
+		logger.info("Disconnected")
 
-	async def handshake(self):
+	def read_data(self):
 		"""
-		Handshaking with Discord (negotiation between two 
-		communicating participants) in asynchronous way.
-		"""
-
-		logger.info("Trying to handshake with Discord...")
-
-		if self.system_name == os_dependencies.supported[0]:
-			logger.debug("Creating pipe connection with Discord IPC socket...")
-			self.pipe_reader = asyncio.StreamReader(loop = self.event_loop)
-			self.pipe_writer, protocol = await self.event_loop.create_pipe_connection(lambda: asyncio.StreamReaderProtocol(self.pipe_reader, loop = self.event_loop), self.ipc_socket)
-		else:
-			logger.debug("Openning unix connection with Discord IPC socket...")
-			self.pipe_reader, self.pipe_writer = await asyncio.open_unix_connection(self.ipc_socket, loop = self.event_loop)
-
-		payloads.handshake["client_id"] = self.client_id
-		self.send_data(0, payloads.handshake)
-		await self.read_data()
-		self.is_connected = True
-		logger.info("Connection with Discord established")
-
-	def keep_conncetion_alive(self):
-		"""
-		Keeping connection alive. No timeout
-		functions for fast terminating.
-		"""
-
-		while self.is_connected:
-			pass
-
-	async def proper_close(self):
-		"""
-		Using asyncio.ProactorEventLoop() on Windows
-		causes some errors while terminationg pipe connection and
-		after that immediately closing main event loop. This
-		easy hack repairs it.
-		"""
-
-		pass
-
-	async def read_data(self):
-		"""
-		Reciving and decoding data from Discord
-		in asynchronous way.
+		Reciving and decoding data from Discord.
 		"""
 
 		logger.info("Getting data from Discord...")
 
 		try:
-			recived_data = await self.pipe_reader.read(1024)
+			encoded_header = b""
+			header_remaining_size = 8
+
+			while header_remaining_size:
+				encoded_header += self.pipe.read(header_remaining_size)
+				header_remaining_size -= len(encoded_header)
+
+			decoded_header = struct.unpack("<ii", encoded_header)
+			encoded_data = b""
+			packet_remaining_size = int(decoded_header[1])
+
+			while packet_remaining_size:
+				encoded_data += self.pipe.read(packet_remaining_size)
+				packet_remaining_size -= len(encoded_data)
+
 			logger.info("Data recived")
-			logger.debug("Recived data: " + str(recived_data))
-			logger.info("Decoding recived data...")
-			decoded_header = struct.unpack("<ii", recived_data[:8])
-			decoded_data = json.loads(recived_data[8:].decode("utf-8"))
+			logger.debug("Recived data: " + str(encoded_header) + str(encoded_data))
+			logger.info("Decodnig recived data...")
+			decoded_data = json.loads(encoded_data.decode("utf-8"))
 			logger.info("Recived data decoded")
-			logger.debug("Decoded data: " + "(" + str(decoded_header[0]) + ", " + str(decoded_header[1]) + ")" + str(decoded_data))
+			logger.debug("Decoded data: (" + str(decoded_header[0]) + ", " + str(decoded_header[1]) + ")" + str(decoded_data))
 		except Exception:
 			logger.error("Cannot get data from Discord")
+			sys.exit(1)
 
 	def send_data(self, opcode, payload):
 		"""
-		Encoding data to send and 
-		sending encoded data to Discord app
-		via Discord IPC socket.
+		Encoding data to send and sending
+		encoded data to Discord app via
+		Discord IPC socket.
 
 		:param opcode: Discord opcode that defines payload type
-		:type op: int
+		:type opcode: int
 		:param payload: data that will be send to Discord app
 		(Discord commands) in proper appearance described
-		on Discord website - developers section
+		on Discord website (developers section)
 		:type payload: string
 		"""
 
 		logger.info("Trying to send payload to Discord...")
-		logger.debug("Orginal data: " + "(" + str(opcode) + ", " + str(len(payload)) + ")" + str(payload))
+		logger.debug("Orginal data: (" + str(opcode) + ", " + str(len(payload)) + ")" + str(payload))
 		logger.info("Encoding data to send...")
 		payload = json.dumps(payload)
 		encoded_data = struct.pack("<ii", opcode, len(payload)) + payload.encode("utf-8")
 		logger.info("Data encoded")
 		logger.debug("Encoded data: " + str(encoded_data))
-		self.pipe_writer.write(encoded_data)
-		logger.info("Data sent")
 
-	def send_simple_rich_presence(self, activity_details, activity_state):
-		"""
-		Creating and sending simple Discord Rich Presence payload to Discord.
-
-		:param activity_details: main description of activity
-		:type activity_details: string
-		:param activity_state: additional description of activity
-		:type activity_state: string
-		"""
-		
-		logger.info("Creating Discord Rich Presence payload...")
-
-		# Setting start time for Discord Rich Presence timer
-		payloads.rpc_timestamps["start"] = self.start_activity_time
-
-		# Setting user activity details
-		payloads.rpc_simple_activity["details"] = activity_details
-		payloads.rpc_simple_activity["state"] = activity_state
-
-		# Setting proper activity type for payload args
-		payloads.rpc_args["activity"] = payloads.rpc_simple_activity
-
-		# Setting pid of running process
-		payloads.rpc_args["pid"] = self.pid
-
-		# Setting unique uuid for payload
-		id = str(self.generate_uuid())
-		payloads.rpc["nonce"] = id
-
-		logger.info("Payload created")
-
-		# Sending ready Discord Rich Presence payload
-		self.send_data(1, payloads.rpc)
-		self.event_loop.run_until_complete(self.read_data())
+		try:
+			self.pipe.write(encoded_data)
+			self.pipe.flush()
+			logger.info("Data sent")
+		except Exception:
+			logger.error("Cannot send data to Discord")
+			sys.exit(1)
 
 	def send_complex_rich_presence(self, large_text, large_image, small_text, small_image, activity_details, activity_state):
 		"""
@@ -304,11 +244,11 @@ class DiscordIPC:
 
 		:param large_text: text to display when large image is hovered
 		:type large_text: string
-		:param large_image: name of large image asset seted on Discord developers website
+		:param large_image: name of large image asset seted on Discord website (developers section)
 		:type large_image: string
 		:param small_text: text to display when small image is hovered
 		:type small_text: string
-		:param small_image: name of small image asset seted on Discord developers website
+		:param small_image: name of small image asset seted on Discord website (developers section)
 		:type small_image: string
 		:param activity_details: main description of activity
 		:type activity_details: string
@@ -338,11 +278,40 @@ class DiscordIPC:
 		payloads.rpc_args["pid"] = self.pid
 
 		# Setting unique uuid for payload
-		id = str(self.generate_uuid())
-		payloads.rpc["nonce"] = id
+		payloads.rpc["nonce"] = str(self.generate_uuid())
 
 		logger.info("Payload created")
-
-		# Sending ready Discord Rich Presence payload
 		self.send_data(1, payloads.rpc)
-		self.event_loop.run_until_complete(self.read_data())
+		self.read_data()
+
+	def send_simple_rich_presence(self, activity_details, activity_state):
+		"""
+		Creating and sending simple Discord Rich Presence payload to Discord.
+
+		:param activity_details: main description of activity
+		:type activity_details: string
+		:param activity_state: additional description of activity
+		:type activity_state: string
+		"""
+		
+		logger.info("Creating Discord Rich Presence payload...")
+
+		# Setting start time for Discord Rich Presence timer
+		payloads.rpc_timestamps["start"] = self.start_activity_time
+
+		# Setting user activity details
+		payloads.rpc_simple_activity["details"] = activity_details
+		payloads.rpc_simple_activity["state"] = activity_state
+
+		# Setting proper activity type for payload args
+		payloads.rpc_args["activity"] = payloads.rpc_simple_activity
+
+		# Setting pid of running process
+		payloads.rpc_args["pid"] = self.pid
+
+		# Setting unique uuid for payload
+		payloads.rpc["nonce"] = str(self.generate_uuid())
+
+		logger.info("Payload created")
+		self.send_data(1, payloads.rpc)
+		self.read_data()

@@ -17,9 +17,9 @@ def main():
 	"""
 	Create instance of DiscordIPC class.
 	Where ClientID paste your token generated
-	on Discord developers website.
+	on Discord website (developers section).
 	"""
-	ipc = discord_ipc.DiscordIPC("ClientID")
+	ipc = discord_ipc.DiscordIPC("417649998252081154")
 	ipc.connect()
 	time.sleep(5)
 
@@ -47,13 +47,13 @@ def main():
 
 	large_text = text that will be displayed on large image hover
 
-	large_image = name of large image file, seted on Discord developers website 
-	(will display as application logo)
+	large_image = name of large image file, seted on Discord website 
+	(developers  section, will display as application logo)
 
 	small_text = text that will be displayed on small image hover
 
-	small_image = name of small image file, seted on Discord developers 
-	website (will display in right bottom corner of large image)
+	small_image = name of small image file, seted on Discord website 
+	(developers section, will display in right bottom corner of large image)
 
 	activity_details = description of main user activity
 
