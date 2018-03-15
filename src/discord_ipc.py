@@ -47,6 +47,16 @@ class DiscordIPC:
 		self.discord_listener = threading.Thread(name = "discord_listener", target = self.keep_connection_alive)
 		self.ipc_socket = self.get_ipc_socket()
 
+	def get_current_time(self):
+		"""
+		Get current time from system clock.
+
+		:returns: current time from system clock in seconds
+		:rtype: float
+		"""
+
+		return time.time()
+
 	def get_ipc_socket(self):
 		"""
 		Searching for Discord IPC socket. Different localizations
