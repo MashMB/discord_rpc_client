@@ -44,6 +44,7 @@ class DiscordIPC:
 
 		self.client_id = client_id
 		self.is_connected = False
+		self.start_activity_time = None
 		self.pipe = None
 		self.ipc_socket = self.get_ipc_socket()
 		self.pid = os.getpid()
@@ -139,6 +140,7 @@ class DiscordIPC:
 			self.send_data(0, payloads.handshake)
 			self.read_data()
 			self.is_connected = True
+			self.start_activity_time = self.get_current_time()
 			logger.info("Connection with Discord established")
 		else:
 			logger.warning("Already connected to Discord")
@@ -153,6 +155,7 @@ class DiscordIPC:
 		self.send_data(2, {})
 		self.pipe.close()
 		self.is_connected = False
+		self.start_activity_time = None
 		logger.info("Disconnected")
 
 	def read_data(self):
@@ -245,7 +248,7 @@ class DiscordIPC:
 		payloads.rpc_assets["small_image"] = small_image
 
 		# Setting start time for Discord Rich Presence timer
-		payloads.rpc_timestamps["start"] = self.get_current_time()
+		payloads.rpc_timestamps["start"] = self.start_activity_time
 
 		# Setting user activity details
 		payloads.rpc_complex_activity["details"] = activity_details
@@ -280,7 +283,7 @@ class DiscordIPC:
 		logger.info("Creating Discord Rich Presence payload...")
 
 		# Setting start time for Discord Rich Presence timer
-		payloads.rpc_timestamps["start"] = self.get_current_time()
+		payloads.rpc_timestamps["start"] = self.start_activity_time
 
 		# Setting user activity details
 		payloads.rpc_simple_activity["details"] = activity_details
