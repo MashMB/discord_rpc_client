@@ -16,6 +16,7 @@ import struct
 import sys
 import threading
 import time
+import uuid
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(format = "%(asctime)s: [%(levelname)s]: %(message)s", datefmt = "%d.%m.%Y (%H:%M:%S)", level = logging.DEBUG)
@@ -84,6 +85,16 @@ class DiscordIPC:
 		logger.debug("Path to Discord IPC socket: " + ipc_socket)
 
 		return ipc_socket
+
+	def generate_uuid(self):
+		"""
+		Generating unique uuid.
+
+		:returns: unique uuid
+		:rtype: uuid
+		"""		
+
+		return uuid.uuid4()
 
 	def get_system_name(self):
 		"""
