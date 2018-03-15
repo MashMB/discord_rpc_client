@@ -123,6 +123,18 @@ class DiscordIPC:
 		else:
 			logger.warning("Already connected to Discord")
 
+	def disconnect(self):
+		"""
+		Disconnecting from Discord by terminating thread
+		that keeps connection alive and closing pipe connection.
+		"""
+
+		logger.info("Disconnecting from Discord...")
+		self.send_data(2, {})
+		self.pipe.close()
+		self.is_connected = False
+		logger.info("Disconnected")
+
 	def keep_connection_alive(self):
 		"""
 		Simple mechanism to keep connection
