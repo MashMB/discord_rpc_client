@@ -218,6 +218,55 @@ class DiscordIPC:
 			logger.error("Cannot send data to Discord")
 			sys.exit(1)
 
+	def send_complex_rich_presence(self, large_text, large_image, small_text, small_image, activity_details, activity_state):
+		"""
+		Creating and sending complex (full) Discord Rich Presence payload to Discord.
+
+		:param large_text: text to display when large image is hovered
+		:type large_text: string
+		:param large_image: name of large image asset seted on Discord website (developers section)
+		:type large_image: string
+		:param small_text: text to display when small image is hovered
+		:type small_text: string
+		:param small_image: name of small image asset seted on Discord website (developers section)
+		:type small_image: string
+		:param activity_details: main description of activity
+		:type activity_details: string
+		:param activity_state: additional description of activity
+		:type activity_state: string
+		"""
+		
+		logger.info("Creating Discord Rich Presence payload...")
+
+		# Setting assets
+		payloads.rpc_assets["large_text"] = large_text
+		payloads.rpc_assets["large_image"] = large_image
+		payloads.rpc_assets["small_text"] = small_text
+		payloads.rpc_assets["small_image"] = small_image
+
+		# Setting start time for Discord Rich Presence timer
+		payloads.rpc_timestamps["start"] = self.get_current_time()
+
+		# Setting user activity details
+		payloads.rpc_complex_activity["details"] = activity_details
+		payloads.rpc_complex_activity["state"] = activity_state
+
+		# Setting proper activity type for payload args
+		payloads.rpc_args["activity"] = payloads.rpc_complex_activity
+
+		# Setting pid of running process
+		payloads.rpc_args["pid"] = self.pid
+
+		# Setting unique uuid for payload
+		id = str(self.generate_uuid())
+		payloads.rpc["nonce"] = id
+
+		logger.info("Payload created")
+
+		# Sending ready Discord Rich Presence payload
+		self.send_data(1, payloads.rpc)
+		self.read_data()
+
 	def send_simple_rich_presence(self, activity_details, activity_state):
 		"""
 		Creating and sending simple Discord Rich Presence payload to Discord.
