@@ -10,6 +10,7 @@ import json
 import logging
 import os
 import os_dependencies
+import payloads
 import platform
 import sys
 import time
@@ -40,6 +41,7 @@ class DiscordIPC:
 
 		self.client_id = client_id
 		self.is_connected = False
+		self.pipe = None
 		self.ipc_socket = self.get_ipc_socket()
 
 	def get_ipc_socket(self):
@@ -91,6 +93,26 @@ class DiscordIPC:
 			return system_name
 		else:
 			raise Exception("Unsupported OS")
+
+	def handshake(self):
+		"""
+		Handshaking with Discord (negotiation between
+		two communicating participants)
+		"""
+
+		logger.info("Trying to handshake with Discord...")
+
+		try:
+			self.pipe = open(self.ipc_socket, "w+b")
+		except Exception:
+			logger.error("Cannot open connection with Discord")
+			sys.exit(1)
+
+		payloads.handshake["client_id"] = self.client_id
+		self.send_data(0, payloads.handshake)
+		self.read_data()
+		self.is_connected = True
+		logger.info("Connection with Discord established")
 
 	def keep_connection_alive(self):
 		"""
