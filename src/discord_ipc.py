@@ -14,7 +14,6 @@ import payloads
 import platform
 import struct
 import sys
-import threading
 import time
 import uuid
 
@@ -148,7 +147,8 @@ class DiscordIPC:
 	def disconnect(self):
 		"""
 		Disconnecting from Discord by sending close 
-		signal to Discord and closing pipe connection.
+		signal to Discord and closing pipe connection, 
+		reseting varaibles.
 		"""
 
 		logger.info("Disconnecting from Discord...")
@@ -261,12 +261,9 @@ class DiscordIPC:
 		payloads.rpc_args["pid"] = self.pid
 
 		# Setting unique uuid for payload
-		id = str(self.generate_uuid())
-		payloads.rpc["nonce"] = id
+		payloads.rpc["nonce"] = str(self.generate_uuid())
 
 		logger.info("Payload created")
-
-		# Sending ready Discord Rich Presence payload
 		self.send_data(1, payloads.rpc)
 		self.read_data()
 
@@ -296,11 +293,8 @@ class DiscordIPC:
 		payloads.rpc_args["pid"] = self.pid
 
 		# Setting unique uuid for payload
-		id = str(self.generate_uuid())
-		payloads.rpc["nonce"] = id
+		payloads.rpc["nonce"] = str(self.generate_uuid())
 
 		logger.info("Payload created")
-
-		# Sending ready Discord Rich Presence payload
 		self.send_data(1, payloads.rpc)
 		self.read_data()
