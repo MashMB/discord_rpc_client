@@ -46,6 +46,7 @@ class DiscordIPC:
 		self.is_connected = False
 		self.pipe = None
 		self.ipc_socket = self.get_ipc_socket()
+		self.pid = os.getpid()
 
 	def get_current_time(self):
 		"""
@@ -216,3 +217,38 @@ class DiscordIPC:
 		except Exception:
 			logger.error("Cannot send data to Discord")
 			sys.exit(1)
+
+	def send_simple_rich_presence(self, activity_details, activity_state):
+		"""
+		Creating and sending simple Discord Rich Presence payload to Discord.
+
+		:param activity_details: main description of activity
+		:type activity_details: string
+		:param activity_state: additional description of activity
+		:type activity_state: string
+		"""
+		
+		logger.info("Creating Discord Rich Presence payload...")
+
+		# Setting start time for Discord Rich Presence timer
+		payloads.rpc_timestamps["start"] = self.get_current_time()
+
+		# Setting user activity details
+		payloads.rpc_simple_activity["details"] = activity_details
+		payloads.rpc_simple_activity["state"] = activity_state
+
+		# Setting proper activity type for payload args
+		payloads.rpc_args["activity"] = payloads.rpc_simple_activity
+
+		# Setting pid of running process
+		payloads.rpc_args["pid"] = self.pid
+
+		# Setting unique uuid for payload
+		id = str(self.generate_uuid())
+		payloads.rpc["nonce"] = id
+
+		logger.info("Payload created")
+
+		# Sending ready Discord Rich Presence payload
+		self.send_data(1, payloads.rpc)
+		self.read_data()
