@@ -12,6 +12,7 @@ import os
 import os_dependencies
 import payloads
 import platform
+import struct
 import sys
 import threading
 import time
@@ -98,7 +99,7 @@ class DiscordIPC:
 
 	def connect(self):
 		"""
-		Trying connect to Discord. Connection will be
+		Trying to connect to Discord. Connection will be
 		established only when handshake (initial message 
 		from client and response from Discord) passes.
 		"""
@@ -109,7 +110,7 @@ class DiscordIPC:
 			try:
 				self.pipe = open(self.ipc_socket, "w+b")
 			except Exception:
-				logger.error("Can not connect to Discord (probably Discord app is not opened)")
+				logger.error("Cannot connect to Discord (probably Discord app is not opened)")
 				sys.exit(1)
 
 			logger.info("Trying to handshake with Discord...")
@@ -143,11 +144,11 @@ class DiscordIPC:
 			header_remaining_size = 8
 
 			while header_remaining_size:
-				encoded_header += self.pipe.read(header_size)
+				encoded_header += self.pipe.read(header_remaining_size)
 				header_remaining_size -= len(encoded_header)
 
 			decoded_header = struct.unpack("<ii", encoded_header)
-			encoded_data = ""
+			encoded_data = b""
 			packet_remaining_size = int(decoded_header[1])
 
 			while packet_remaining_size:
@@ -162,6 +163,7 @@ class DiscordIPC:
 			logger.debug("Decoded data: (" + str(decoded_header[0]) + ", " + str(decoded_header[1]) + str(decoded_data))
 		except Exception:
 			logger.error("Cannot get data from Discord")
+			sys.exit(1)
 
 	def send_data(self, opcode, payload):
 		"""
@@ -181,9 +183,14 @@ class DiscordIPC:
 		logger.debug("Orginal data: (" + str(opcode) + ", " + str(len(payload)) + ")" + str(payload))
 		logger.info("Encoding data to send...")
 		payload = json.dumps(payload)
-		encoded_data = struct.pack("<ii" + opcode, len(payload)) + payload.encode("utf-8")
+		encoded_data = struct.pack("<ii", opcode, len(payload)) + payload.encode("utf-8")
 		logger.info("Data encoded")
 		logger.debug("Encoded data: " + str(encoded_data))
-		self.pipe.write(encoded_data)
-		self.pipe.flush()
-		logger.info("Data sent")
+
+		try:
+			self.pipe.write(encoded_data)
+			self.pipe.flush()
+			logger.info("Data sent")
+		except Exception:
+			logger.error("Cannot send data to Discord")
+			sys.exit(1)
