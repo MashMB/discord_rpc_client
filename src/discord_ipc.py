@@ -13,6 +13,7 @@ import os_dependencies
 import payloads
 import platform
 import sys
+import threading
 import time
 
 logger = logging.getLogger(__name__)
@@ -42,6 +43,7 @@ class DiscordIPC:
 		self.client_id = client_id
 		self.is_connected = False
 		self.pipe = None
+		self.discord_listener = threading.Thread(name = "discord_listener", target = self.keep_connection_alive)
 		self.ipc_socket = self.get_ipc_socket()
 
 	def get_ipc_socket(self):
@@ -94,25 +96,31 @@ class DiscordIPC:
 		else:
 			raise Exception("Unsupported OS")
 
-	def handshake(self):
+	def connect(self):
 		"""
-		Handshaking with Discord (negotiation between
-		two communicating participants)
+		Trying connect to Discord. Connection will be
+		established only when handshake (initial message 
+		from client and response from Discord) passes.
 		"""
 
-		logger.info("Trying to handshake with Discord...")
+		if not self.is_connected:
+			logger.info("Trying to connect to Discord...")
+			
+			try:
+				self.pipe = open(self.ipc_socket, "w+b")
+			except Exception:
+				logger.error("Can not connect to Discord (probably Discord app is not opened)")
+				sys.exit(1)
 
-		try:
-			self.pipe = open(self.ipc_socket, "w+b")
-		except Exception:
-			logger.error("Cannot open connection with Discord")
-			sys.exit(1)
-
-		payloads.handshake["client_id"] = self.client_id
-		self.send_data(0, payloads.handshake)
-		self.read_data()
-		self.is_connected = True
-		logger.info("Connection with Discord established")
+			logger.info("Trying to handshake with Discord...")
+			payloads.handshake["client_id"] = self.client_id
+			self.send_data(0, payloads.handshake)
+			self.read_data()
+			self.is_connected = True
+			self.discord_listener.start()
+			logger.info("Connection with Discord established")
+		else:
+			logger.warning("Already connected to Discord")
 
 	def keep_connection_alive(self):
 		"""
