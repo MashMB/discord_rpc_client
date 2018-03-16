@@ -193,20 +193,26 @@ class DiscordIPC:
 		logger.info("Getting data from Discord...")
 
 		try:
-			encoded_header = b""
-			header_remaining_size = 8
+			if self.system_name == os_dependencies.supported[0]:
+				encoded_header = b""
+				header_remaining_size = 8
 
-			while header_remaining_size:
-				encoded_header += self.pipe.read(header_remaining_size)
-				header_remaining_size -= len(encoded_header)
+				while header_remaining_size:
+					encoded_header += self.pipe.read(header_remaining_size)
+					header_remaining_size -= len(encoded_header)
 
-			decoded_header = struct.unpack("<ii", encoded_header)
-			encoded_data = b""
-			packet_remaining_size = int(decoded_header[1])
+				decoded_header = struct.unpack("<ii", encoded_header)
+				encoded_data = b""
+				packet_remaining_size = int(decoded_header[1])
 
-			while packet_remaining_size:
-				encoded_data += self.pipe.read(packet_remaining_size)
-				packet_remaining_size -= len(encoded_data)
+				while packet_remaining_size:
+					encoded_data += self.pipe.read(packet_remaining_size)
+					packet_remaining_size -= len(encoded_data)
+			else:
+				recived_data = self.pipe.recv(1024)
+				encoded_header = recived_data[:8]
+				decoded_header = struct.unpack("<ii", encoded_header)
+				encoded_data = recived_data[8:]
 
 			logger.info("Data recived")
 			logger.debug("Recived data: " + str(encoded_header) + str(encoded_data))
