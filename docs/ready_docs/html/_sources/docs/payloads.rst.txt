@@ -48,7 +48,7 @@ Json template for rpc complex (full) activity section
 		"details": None,
 		"state": None,
 		"timestamps": rpc_timestamps,
-		"asstes": rpc_assets
+		"assets": rpc_assets
 	}
 
 =============================================
