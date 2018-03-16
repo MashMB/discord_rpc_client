@@ -8,7 +8,7 @@ Main entry point.
 	Short example how to set Discord Rich Presence 
 	via Discord IPC wrapper.
 
-	Create instance of DiscordIPC class. Where **ClientID** paste your token generated on Discord developers website.
+	Create instance of DiscordIPC class. Where **ClientID** paste your token generated on Discord website (developers section).
 
 	.. code-block:: python
 
