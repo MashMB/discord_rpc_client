@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Discord IPC wrapper &mdash; Discord Rich Presence Client 1.0.1 documentation</title>
+  <title>Discord IPC wrapper &mdash; Discord Rich Presence Client 2.0.0 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
         <link rel="index" title="Index"
               href="../genindex.html"/>
         <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="Discord Rich Presence Client 1.0.1 documentation" href="../index.html"/>
+    <link rel="top" title="Discord Rich Presence Client 2.0.0 documentation" href="../index.html"/>
         <link rel="next" title="OS Dependencies" href="os_dependencies.html"/>
         <link rel="prev" title="Welcome to documentation of Discord Rich Presence Client!" href="../index.html"/> 
 
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                1.0.1
+                2.0.0
               </div>
             
           
@@ -173,7 +173,7 @@
   <div class="section" id="discord-ipc-wrapper">
 <h1>Discord IPC wrapper<a class="headerlink" href="#discord-ipc-wrapper" title="Permalink to this headline">¶</a></h1>
 <p>Simple Discord IPC wrapper that gives opportunity
-to use Discord Rich Presence for example.</p>
+to use Discord Rich Presence.</p>
 <dl class="class">
 <dt id="DiscordIPC">
 <em class="property">class </em><code class="descname">DiscordIPC</code><a class="headerlink" href="#DiscordIPC" title="Permalink to this definition">¶</a></dt>
@@ -187,7 +187,7 @@ sending commands, handling responses.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>client_id</strong> (<em>string</em>) – unique Discord client ID generated for application created in Discord web panel for developers</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>client_id</strong> (<em>string</em>) – unique Discord client ID generated on Discord website (developers section)</td>
 </tr>
 </tbody>
 </table>
@@ -204,24 +204,6 @@ sending commands, handling responses.</p>
 <tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">current time from system clock in seconds</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">float</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="DiscordIPC.get_system_name">
-<code class="descname">get_system_name</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span><a class="headerlink" href="#DiscordIPC.get_system_name" title="Permalink to this definition">¶</a></dt>
-<dd><p>Getting system name and checking
-if running OS is supported. Supported OS:
-Windows, Linux, MacOS.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">running OS name (lowercase)</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">string</td>
 </tr>
 </tbody>
 </table>
@@ -261,82 +243,59 @@ to search for on different platforms.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="DiscordIPC.connect">
-<code class="descname">connect</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span><a class="headerlink" href="#DiscordIPC.connect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Trying connect to Discord. Connection is established
-when Discord recives initial message and responses
-for the message.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="DiscordIPC.disconnect">
-<code class="descname">disconnect</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span><a class="headerlink" href="#DiscordIPC.disconnect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Disconnecting from Discord by terminating
-asynchronous methods and Thread that
-keeps connection alive, reseting all components.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="descname">async handshake(self)</code></dt>
-<dd><p>Handshaking with Discord (negotiation between two
-communicating participants) in asynchronous way.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="DiscordIPC.keep_conncetion_alive">
-<code class="descname">keep_conncetion_alive</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span><a class="headerlink" href="#DiscordIPC.keep_conncetion_alive" title="Permalink to this definition">¶</a></dt>
-<dd><p>Keeping connection alive. No timeout
-functions for fast terminating.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="descname">async proper_close(self)</code></dt>
-<dd><p>Using asyncio.ProactorEventLoop() on Windows
-causes some errors while terminationg pipe connection and
-after that immediately closing main event loop. This
-easy hack repairs it.</p>
-</dd></dl>
-
-<dl class="method">
-<dt>
-<code class="descname">async read_data(self)</code></dt>
-<dd><p>Reciving and decoding data from Discord
-in asynchronous way.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="DiscordIPC.send_data">
-<code class="descname">send_data</code><span class="sig-paren">(</span><em>self</em>, <em>opcode</em>, <em>payload</em><span class="sig-paren">)</span><a class="headerlink" href="#DiscordIPC.send_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Encoding data to send and
-sending encoded data to Discord app
-via Discord IPC socket.</p>
+<dt id="DiscordIPC.get_system_name">
+<code class="descname">get_system_name</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span><a class="headerlink" href="#DiscordIPC.get_system_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getting system name and checking if running OS
+is supported. Supported OS: Windows, Linux MacOS.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>opcode</strong> – Discord opcode that defines payload type</li>
-<li><strong>payload</strong> (<em>string</em>) – data that will be send to Discord app (Discord commands) in proper appearance described on Discord website - developers section</li>
-</ul>
-</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">running OS name (lowercase)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">string</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Raises:</th><td class="field-body"><strong>Exception</strong> – if running OS is not included in supported OS list, raise the Exception</td>
 </tr>
 </tbody>
 </table>
 </dd></dl>
 
 <dl class="method">
-<dt id="DiscordIPC.send_simple_rich_presence">
-<code class="descname">send_simple_rich_presence</code><span class="sig-paren">(</span><em>self</em>, <em>activity_details</em>, <em>activity_state</em><span class="sig-paren">)</span><a class="headerlink" href="#DiscordIPC.send_simple_rich_presence" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creating and sending simple Discord Rich Presence payload to Discord.</p>
+<dt id="DiscordIPC.connect">
+<code class="descname">connect</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span><a class="headerlink" href="#DiscordIPC.connect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Trying to connect to Discord. Connection will be
+established only when handshake (initial message
+from client and response from Discord) passes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="DiscordIPC.disconnect">
+<code class="descname">disconnect</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span><a class="headerlink" href="#DiscordIPC.disconnect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Disconnecting from Discord by sending close
+signal to Discord and closing pipe connection,
+reseting varaibles.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="DiscordIPC.read_data">
+<code class="descname">read_data</code><span class="sig-paren">(</span><em>self</em><span class="sig-paren">)</span><a class="headerlink" href="#DiscordIPC.read_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reciving and decoding data from Discord.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="DiscordIPC.send_data">
+<code class="descname">send_data</code><span class="sig-paren">(</span><em>self</em>, <em>opcode</em>, <em>payload</em><span class="sig-paren">)</span><a class="headerlink" href="#DiscordIPC.send_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Encoding data to send and sending
+encoded data to Discord app via
+Discord IPC socket.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>activity_details</strong> (<em>string</em>) – main description of activity</li>
-<li><strong>activity_state</strong> (<em>string</em>) – additional description of activity</li>
+<li><strong>opcode</strong> (<em>int</em>) – Discord opcode that defines payload type</li>
+<li><strong>payload</strong> (<em>string</em>) – data that will be send to Discord app (Discord commands) in proper appearance described on Discord website (developers section)</li>
 </ul>
 </td>
 </tr>
@@ -354,9 +313,27 @@ via Discord IPC socket.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>large_text</strong> (<em>string</em>) – text to display when large image is hovered</li>
-<li><strong>large_image</strong> (<em>string</em>) – name of large image asset seted on Discord developers website</li>
+<li><strong>large_image</strong> (<em>string</em>) – name of large image asset seted on Discord website (developers section)</li>
 <li><strong>small_text</strong> (<em>string</em>) – text to display when small image is hovered</li>
-<li><strong>small_image</strong> (<em>string</em>) – name of small image asset seted on Discord developers website</li>
+<li><strong>small_image</strong> (<em>string</em>) – name of small image asset seted on Discord website (developers section)</li>
+<li><strong>activity_details</strong> (<em>string</em>) – main description of activity</li>
+<li><strong>activity_state</strong> (<em>string</em>) – additional description of activity</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="DiscordIPC.send_simple_rich_presence">
+<code class="descname">send_simple_rich_presence</code><span class="sig-paren">(</span><em>self</em>, <em>activity_details</em>, <em>activity_state</em><span class="sig-paren">)</span><a class="headerlink" href="#DiscordIPC.send_simple_rich_presence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creating and sending simple Discord Rich Presence payload to Discord.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>activity_details</strong> (<em>string</em>) – main description of activity</li>
 <li><strong>activity_state</strong> (<em>string</em>) – additional description of activity</li>
 </ul>
@@ -414,7 +391,7 @@ via Discord IPC socket.</p>
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
             URL_ROOT:'../',
-            VERSION:'1.0.1',
+            VERSION:'2.0.0',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE:  true,
