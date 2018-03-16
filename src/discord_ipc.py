@@ -19,7 +19,7 @@ import time
 import uuid
 
 # Configuring logger
-logger_level = "DEBUG" # DEBUG or INFO
+logger_level = "INFO" # DEBUG or INFO
 
 logger = logging.getLogger(__name__)
 
