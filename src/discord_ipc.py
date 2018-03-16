@@ -175,7 +175,12 @@ class DiscordIPC:
 
 		logger.info("Disconnecting from Discord...")
 		self.send_data(2, {})
+
+		if self.system_name != os_dependencies.supported[0]:
+			self.pipe.shutdown(socket.SHUT_RDWR)	
+
 		self.pipe.close()
+		self.pipe = None
 		self.is_connected = False
 		self.start_activity_time = None
 		logger.info("Disconnected")
