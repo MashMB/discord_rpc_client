@@ -19,7 +19,7 @@ def main():
 	Where ClientID paste your token generated
 	on Discord website (developers section).
 	"""
-	ipc = discord_ipc.DiscordIPC("417649998252081154")
+	ipc = discord_ipc.DiscordIPC("ClientID")
 	ipc.connect()
 	time.sleep(5)
 
