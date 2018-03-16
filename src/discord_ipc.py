@@ -150,7 +150,7 @@ class DiscordIPC:
 				if self.system_name == os_dependencies.supported[0]:
 					self.pipe = open(self.ipc_socket, "w+b")
 				else:
-					self.pipe = socket.socket(socket.AF_UNIX, socket.SOCKET_STREAM)
+					self.pipe = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 					self.pipe.connect(self.ipc_socket)
 			except Exception:
 				logger.error("Cannot connect to Discord (probably Discord app is not opened)")
