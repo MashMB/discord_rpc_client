@@ -241,8 +241,12 @@ class DiscordIPC:
 		logger.debug("Encoded data: " + str(encoded_data))
 
 		try:
-			self.pipe.write(encoded_data)
-			self.pipe.flush()
+			if self.system_name == os_dependencies.supported[0]:
+				self.pipe.write(encoded_data)
+				self.pipe.flush()
+			else:
+				self.pipe.send(encoded_data)
+				
 			logger.info("Data sent")
 		except Exception:
 			logger.error("Cannot send data to Discord")
