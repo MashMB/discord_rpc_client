@@ -12,6 +12,7 @@ import os
 import os_dependencies
 import payloads
 import platform
+import socket
 import struct
 import sys
 import time
@@ -146,7 +147,11 @@ class DiscordIPC:
 			logger.info("Trying to connect to Discord...")
 			
 			try:
-				self.pipe = open(self.ipc_socket, "w+b")
+				if self.system_name == os_dependencies.supported[0]:
+					self.pipe = open(self.ipc_socket, "w+b")
+				else:
+					self.pipe = socket.socket(socket.AF_UNIX, socket.SOCKET_STREAM)
+					self.pipe.connect(self.ipc_socket)
 			except Exception:
 				logger.error("Cannot connect to Discord (probably Discord app is not opened)")
 				sys.exit(1)
