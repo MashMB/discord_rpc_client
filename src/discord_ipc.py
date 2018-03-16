@@ -28,7 +28,7 @@ logging.DEBUG level will be used to analyse errors,
 it will generate file with logs for developer to fix bugs,
 do not use logging.DEBUG level if it is not necessary
 """
-if logger_level == "INFO":
+if logger_level == "DEBUG":
 	logger.setLevel(logging.DEBUG)
 	handler = logging.FileHandler("discord_ipc.log")
 	handler.setLevel(logging.DEBUG)
